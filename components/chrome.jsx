@@ -19,7 +19,7 @@ const SiteHeader = ({ route }) => {
       borderBottom: scrolled ? '1px solid rgba(255,255,255,0.06)' : '1px solid transparent',
     }}>
       <a href="#/home" style={{ display: 'flex', alignItems: 'center' }}>
-        <Wordmark size={140} variant="dark" />
+        <Wordmark size={140} variant="light" />
       </a>
       <nav style={{ display: 'flex', alignItems: 'center', gap: 36 }}>
         {NAV.slice(1, -1).map(n => (
