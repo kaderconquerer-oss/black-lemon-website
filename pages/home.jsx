@@ -18,7 +18,7 @@ const HomeHero = () => {
       </div>
 
       {/* Headline */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 64, paddingTop: 24 }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 48, paddingTop: 24 }}>
         <Reveal>
           <h1 className="bl-h1" style={{ maxWidth: 1500 }}>
             We make<br/>
