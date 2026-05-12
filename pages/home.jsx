@@ -17,37 +17,30 @@ const HomeHero = () => {
         <span className="bl-hero-meta__text">Dubai · Operating since 2019</span>
       </div>
 
-      {/* Headline */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 48, paddingTop: 24 }}>
-        <Reveal>
-          <h1 className="bl-h1" style={{ maxWidth: 1500 }}>
-            We make<br/>
-            <span style={{ display: 'inline-flex', alignItems: 'baseline' }}>
-              <span style={{ display: 'inline-block', width: '0.06em', height: '0.85em', background: 'var(--bl-yellow)', alignSelf: 'center', marginRight: '0.08em' }} />
-              <span style={{ position: 'relative', display: 'inline-block', minWidth: '6ch' }}>
-                {words.map((w, idx) => (
-                  <span key={idx} style={{
-                    position: idx === 0 ? 'relative' : 'absolute',
-                    left: 0, top: 0,
-                    opacity: idx === i ? 1 : 0,
-                    transform: idx === i ? 'translateY(0)' : 'translateY(20px)',
-                    transition: 'all 0.6s cubic-bezier(.2,.7,.3,1)',
-                    whiteSpace: 'nowrap',
-                  }}>{w}</span>
-                ))}
+      {/* Headline + scroll cue (same vertical band as “We make”) */}
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 40, paddingTop: 24 }}>
+        <div className="bl-hero-headline-row">
+          <Reveal>
+            <h1 className="bl-h1" style={{ maxWidth: 1500 }}>
+              We make<br/>
+              <span style={{ display: 'inline-flex', alignItems: 'baseline' }}>
+                <span style={{ display: 'inline-block', width: '0.06em', height: '0.85em', background: 'var(--bl-yellow)', alignSelf: 'center', marginRight: '0.08em' }} />
+                <span style={{ position: 'relative', display: 'inline-block', minWidth: '6ch' }}>
+                  {words.map((w, idx) => (
+                    <span key={idx} style={{
+                      position: idx === 0 ? 'relative' : 'absolute',
+                      left: 0, top: 0,
+                      opacity: idx === i ? 1 : 0,
+                      transform: idx === i ? 'translateY(0)' : 'translateY(20px)',
+                      transition: 'all 0.6s cubic-bezier(.2,.7,.3,1)',
+                      whiteSpace: 'nowrap',
+                    }}>{w}</span>
+                  ))}
+                </span>
               </span>
-            </span>
-            <br/>
-            <span className="bl-italic" style={{ fontWeight: 300, fontSize: '0.7em' }}>People remember.</span>
-          </h1>
-        </Reveal>
-
-        {/* Bottom row: tagline on the left, scroll cue on the right */}
-        <div className="bl-hero-bottom">
-          <Reveal delay={300}>
-            <p className="bl-hero-tagline">
-              An event studio in Dubai working at the intersection of editorial design and live production. Galas, launches, conferences, dinners — built by six people, on purpose.
-            </p>
+              <br/>
+              <span className="bl-italic" style={{ fontWeight: 300, fontSize: '0.7em' }}>People remember.</span>
+            </h1>
           </Reveal>
 
           <Reveal delay={450}>
@@ -63,6 +56,14 @@ const HomeHero = () => {
               </span>
               <span className="bl-scroll-cue__arrow" aria-hidden="true">↓</span>
             </a>
+          </Reveal>
+        </div>
+
+        <div className="bl-hero-bottom">
+          <Reveal delay={300}>
+            <p className="bl-hero-tagline">
+              An event studio in Dubai working at the intersection of editorial design and live production. Galas, launches, conferences, dinners — built by six people, on purpose.
+            </p>
           </Reveal>
         </div>
       </div>
