@@ -37,15 +37,24 @@ const CursorBar = () => {
     const tickMove = () => { moveN++; };
     let flush = setInterval(() => {
       if (moveN) {
-        fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'primitives.jsx:CursorBar', message: 'mousemove1s', data: { hypothesisId: 'B', count: moveN }, timestamp: Date.now(), runId: 'pre-fix' }) }).catch(() => {});
+        fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'primitives.jsx:CursorBar', message: 'mousemove1s', data: { hypothesisId: 'B', count: moveN, rafCoalesced: true }, timestamp: Date.now(), runId: 'post-fix' }) }).catch(() => {});
         moveN = 0;
       }
     }, 1000);
     // #endregion
-    const onMove = (e) => {
+    let rafMove = 0;
+    let pendingEv = null;
+    const applyMove = () => {
+      rafMove = 0;
+      const e = pendingEv;
+      if (!e) return;
       tickMove();
       ring.style.transform = `translate3d(${e.clientX - 14}px, ${e.clientY - 14}px, 0)`;
       if (!visible) { ring.style.opacity = '1'; visible = true; }
+    };
+    const onMove = (e) => {
+      pendingEv = e;
+      if (!rafMove) rafMove = requestAnimationFrame(applyMove);
     };
     const onLeave = () => { ring.style.opacity = '0'; visible = false; };
     const onOver = (e) => {
@@ -61,6 +70,7 @@ const CursorBar = () => {
       // #region agent log
       clearInterval(flush);
       // #endregion
+      if (rafMove) cancelAnimationFrame(rafMove);
       window.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseover', onOver);
       ring.remove();

@@ -1,0 +1,13 @@
+{"sessionId":"c543d8","location":"home.jsx:HomeHero","message":"wordIndexTick","data":{"hypothesisId":"A","i":0},"timestamp":1778592000883,"runId":"pre-fix"}
+{"sessionId":"c543d8","location":"home.jsx:HomeHero","message":"wordIndexTick","data":{"hypothesisId":"A","i":1},"timestamp":1778592003083,"runId":"pre-fix"}
+{"sessionId":"c543d8","location":"home.jsx:HomeHero","message":"wordIndexTick","data":{"hypothesisId":"A","i":2},"timestamp":1778592005284,"runId":"pre-fix"}
+{"sessionId":"c543d8","location":"home.jsx:HomeHero","message":"wordIndexTick","data":{"hypothesisId":"A","i":3},"timestamp":1778592007484,"runId":"pre-fix"}
+{"sessionId":"c543d8","location":"home.jsx:HomeHero","message":"wordIndexTick","data":{"hypothesisId":"A","i":4},"timestamp":1778592009685,"runId":"pre-fix"}
+{"sessionId":"c543d8","location":"home.jsx:HomeHero","message":"wordIndexTick","data":{"hypothesisId":"A","i":5},"timestamp":1778592011883,"runId":"pre-fix"}
+{"sessionId":"c543d8","location":"primitives.jsx:CursorBar","message":"mousemove1s","data":{"hypothesisId":"B","count":1},"timestamp":1778592013882,"runId":"pre-fix"}
+{"sessionId":"c543d8","location":"home.jsx:HomeHero","message":"wordIndexTick","data":{"hypothesisId":"A","i":0},"timestamp":1778592014084,"runId":"pre-fix"}
+{"sessionId":"c543d8","location":"home.jsx:HomeHero","message":"wordIndexTick","data":{"hypothesisId":"A","i":1},"timestamp":1778592016284,"runId":"pre-fix"}
+{"sessionId":"c543d8","location":"primitives.jsx:CursorBar","message":"mousemove1s","data":{"hypothesisId":"B","count":1},"timestamp":1778592016882,"runId":"pre-fix"}
+{"sessionId":"c543d8","location":"home.jsx:HomeHero","message":"wordIndexTick","data":{"hypothesisId":"A","i":2},"timestamp":1778592018484,"runId":"pre-fix"}
+{"sessionId":"c543d8","location":"home.jsx:HomeHero","message":"wordIndexTick","data":{"hypothesisId":"A","i":3},"timestamp":1778592020684,"runId":"pre-fix"}
+{"sessionId":"c543d8","location":"home.jsx:HomeHero","message":"wordIndexTick","data":{"hypothesisId":"A","i":4},"timestamp":1778592022883,"runId":"pre-fix"}

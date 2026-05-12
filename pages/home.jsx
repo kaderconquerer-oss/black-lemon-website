@@ -1,26 +1,50 @@
 // Home page — single-page scroller
 
-const HomeHero = () => {
-  // Kinetic hero: oversized type with cycling word
-  const words = ['Galas.', 'Launches.', 'Weddings.', 'Festivals.', 'Town halls.', 'Dinners.'];
+// Word carousel isolated so parent hero + Reveal wrappers do not re-render every tick (perf).
+const HeroRotatingWords = ({ words }) => {
   const [i, setI] = React.useState(0);
+  React.useEffect(() => {
+    const t = setInterval(() => setI(x => (x + 1) % words.length), 2200);
+    return () => clearInterval(t);
+  }, [words.length]);
+  // #region agent log
+  React.useEffect(() => {
+    fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HeroRotatingWords', message: 'wordIndexTick', data: { hypothesisId: 'A', i, isolated: true }, timestamp: Date.now(), runId: 'post-fix' }) }).catch(() => {});
+  }, [i]);
+  // #endregion
+  return (
+    <span style={{ position: 'relative', display: 'inline-block', minWidth: '6ch' }}>
+      {words.map((w, idx) => (
+        <span key={idx} style={{
+          position: idx === 0 ? 'relative' : 'absolute',
+          left: 0, top: 0,
+          opacity: idx === i ? 1 : 0,
+          transform: idx === i ? 'translateY(0)' : 'translateY(14px)',
+          transition: 'opacity 0.45s cubic-bezier(.2,.7,.3,1), transform 0.45s cubic-bezier(.2,.7,.3,1)',
+          whiteSpace: 'nowrap',
+          pointerEvents: 'none',
+        }}>{w}</span>
+      ))}
+    </span>
+  );
+};
+
+const HomeHero = () => {
+  const words = ['Galas.', 'Launches.', 'Weddings.', 'Festivals.', 'Town halls.', 'Dinners.'];
   // #region agent log
   const heroDbgMount = React.useRef(0);
   const heroSectionRef = React.useRef(null);
   heroDbgMount.current += 1;
   React.useEffect(() => {
-    fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeHero', message: 'mount', data: { hypothesisId: 'A', renderCount: heroDbgMount.current }, timestamp: Date.now(), runId: 'pre-fix' }) }).catch(() => {});
+    fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeHero', message: 'mount', data: { hypothesisId: 'A', renderCount: heroDbgMount.current }, timestamp: Date.now(), runId: 'post-fix' }) }).catch(() => {});
   }, []);
-  React.useEffect(() => {
-    fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeHero', message: 'wordIndexTick', data: { hypothesisId: 'A', i }, timestamp: Date.now(), runId: 'pre-fix' }) }).catch(() => {});
-  }, [i]);
   React.useEffect(() => {
     let po;
     try {
       po = new PerformanceObserver((list) => {
         for (const e of list.getEntries()) {
           if (e.duration >= 48) {
-            fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeHero', message: 'longtask', data: { hypothesisId: 'E', durationMs: Math.round(e.duration), name: e.name || '' }, timestamp: Date.now(), runId: 'pre-fix' }) }).catch(() => {});
+            fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeHero', message: 'longtask', data: { hypothesisId: 'E', durationMs: Math.round(e.duration), name: e.name || '' }, timestamp: Date.now(), runId: 'post-fix' }) }).catch(() => {});
           }
         }
       });
@@ -37,17 +61,13 @@ const HomeHero = () => {
     const io = new IntersectionObserver(([e]) => {
       const is = e.isIntersecting;
       if (prev !== null && prev !== is) {
-        fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:heroIo', message: 'visibilityToggle', data: { hypothesisId: 'D', isIntersecting: is, ratio: e.intersectionRatio }, timestamp: Date.now(), runId: 'pre-fix' }) }).catch(() => {});
+        fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:heroIo', message: 'visibilityToggle', data: { hypothesisId: 'D', isIntersecting: is, ratio: e.intersectionRatio }, timestamp: Date.now(), runId: 'post-fix' }) }).catch(() => {});
       }
       prev = is;
     }, { threshold: [0, 0.15, 0.5, 1] });
     io.observe(el);
     return () => io.disconnect();
     // #endregion
-  }, []);
-  React.useEffect(() => {
-    const t = setInterval(() => setI(x => (x + 1) % words.length), 2200);
-    return () => clearInterval(t);
   }, []);
 
   return (
@@ -64,18 +84,7 @@ const HomeHero = () => {
             We make<br/>
             <span style={{ display: 'inline-flex', alignItems: 'baseline' }}>
               <span style={{ display: 'inline-block', width: '0.06em', height: '0.85em', background: 'var(--bl-yellow)', alignSelf: 'center', marginRight: '0.08em' }} />
-              <span style={{ position: 'relative', display: 'inline-block', minWidth: '6ch' }}>
-                {words.map((w, idx) => (
-                  <span key={idx} style={{
-                    position: idx === 0 ? 'relative' : 'absolute',
-                    left: 0, top: 0,
-                    opacity: idx === i ? 1 : 0,
-                    transform: idx === i ? 'translateY(0)' : 'translateY(20px)',
-                    transition: 'all 0.6s cubic-bezier(.2,.7,.3,1)',
-                    whiteSpace: 'nowrap',
-                  }}>{w}</span>
-                ))}
-              </span>
+              <HeroRotatingWords words={words} />
             </span>
             <br/>
             <span className="bl-italic" style={{ fontWeight: 300, fontSize: '0.7em' }}>People remember.</span>
