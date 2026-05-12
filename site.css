@@ -180,19 +180,20 @@ img { max-width: 100%; }
   position: relative;
   background: linear-gradient(
     105deg,
-    rgba(255, 255, 255, 0.78) 0%,
-    rgba(255, 255, 255, 0.78) 35%,
-    rgba(253, 213, 53, 1) 44%,
+    rgba(255, 255, 255, 0.72) 0%,
+    rgba(255, 255, 255, 0.72) 38%,
+    rgba(253, 213, 53, 0.95) 46%,
     rgba(255, 255, 255, 1) 50%,
-    rgba(253, 213, 53, 1) 56%,
-    rgba(255, 255, 255, 0.78) 65%,
-    rgba(255, 255, 255, 0.78) 100%
+    rgba(253, 213, 53, 0.95) 54%,
+    rgba(255, 255, 255, 0.72) 62%,
+    rgba(255, 255, 255, 0.72) 100%
   );
   background-size: 300% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: bl-shimmer 5s ease-in-out infinite;
+  animation: bl-shimmer 10s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(253, 213, 53, 0.12)) drop-shadow(0 0 40px rgba(253, 213, 53, 0.06));
 }
 @keyframes bl-shimmer {
   0%, 100% { background-position: 100% 50%; }
@@ -206,6 +207,7 @@ img { max-width: 100%; }
     background-clip: unset;
     -webkit-text-fill-color: rgba(255, 255, 255, 0.78);
     color: rgba(255, 255, 255, 0.78);
+    filter: none;
   }
 }
 /* Right-edge scroll affordance — low contrast, yellow glow */
@@ -947,4 +949,253 @@ section#clients { background: #070707 !important; }
 /* On desktop the drawer never shows */
 @media (min-width: 901px) {
   .bl-mobile-drawer { display: none !important; }
+}
+
+/* ─────────────────────────────────────────────────────────
+   IMMERSIVE PARALLAX — Studio Note (z-axis depth)
+   ───────────────────────────────────────────────────────── */
+.bl-parallax-wrap {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  background: #020202;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+}
+.bl-parallax-depth {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  transform-style: preserve-3d;
+}
+.bl-parallax-layer {
+  position: absolute;
+  will-change: transform;
+  transition: transform 0.1s linear;
+}
+.bl-parallax-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(253,213,53,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(253,213,53,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 60% 50% at 50% 50%, black 20%, transparent 70%);
+}
+.bl-parallax-ring {
+  border: 1px solid rgba(253,213,53,0.08);
+  border-radius: 50%;
+  position: absolute;
+}
+.bl-parallax-ring--1 { width: 600px; height: 600px; top: 50%; left: 50%; margin: -300px 0 0 -300px; }
+.bl-parallax-ring--2 { width: 900px; height: 900px; top: 50%; left: 50%; margin: -450px 0 0 -450px; }
+.bl-parallax-ring--3 { width: 1200px; height: 1200px; top: 50%; left: 50%; margin: -600px 0 0 -600px; }
+.bl-parallax-particle {
+  position: absolute;
+  width: 3px; height: 3px;
+  background: var(--bl-yellow);
+  border-radius: 50%;
+  opacity: 0;
+  animation: bl-particle-float 6s ease-in-out infinite;
+}
+@keyframes bl-particle-float {
+  0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.6; }
+  50% { transform: translateY(-40px) scale(1); }
+}
+.bl-parallax-fog {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, transparent 30%, #020202 70%);
+  pointer-events: none;
+}
+.bl-parallax-content {
+  position: relative; z-index: 10;
+  text-align: center;
+  max-width: 900px;
+  padding: 0 32px;
+}
+.bl-parallax-content__eyebrow {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.4em;
+  text-transform: uppercase; color: var(--bl-yellow); opacity: 0.7;
+  margin-bottom: 40px;
+}
+.bl-parallax-content__quote {
+  font-family: var(--font-serif); font-style: italic; font-weight: 300;
+  font-size: clamp(32px, 5vw, 64px); line-height: 1.2;
+  letter-spacing: -0.02em; color: #fff; margin: 0;
+}
+.bl-parallax-content__accent {
+  color: var(--bl-yellow);
+  text-shadow: 0 0 60px rgba(253,213,53,0.3), 0 0 120px rgba(253,213,53,0.1);
+}
+.bl-parallax-content__attr {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: rgba(255,255,255,0.35);
+  margin-top: 48px;
+}
+.bl-parallax-line {
+  position: absolute; left: 50%;
+  width: 1px; background: linear-gradient(180deg, transparent, rgba(253,213,53,0.2), transparent);
+  pointer-events: none;
+}
+@media (max-width: 900px) {
+  .bl-parallax-wrap { min-height: 80vh; }
+  .bl-parallax-ring--3 { display: none; }
+}
+
+/* ─────────────────────────────────────────────────────────
+   3D SERVICES — floating card grid
+   ───────────────────────────────────────────────────────── */
+.bl-services-3d {
+  background: #0a0a0a;
+  color: #fff;
+  padding: 120px 64px;
+  overflow: hidden;
+  position: relative;
+}
+.bl-services-3d__header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 96px;
+  margin-bottom: 80px;
+}
+.bl-services-3d__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  perspective: 1400px;
+}
+.bl-service-card {
+  position: relative;
+  background: linear-gradient(160deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 32px 28px;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 20px;
+  transition: transform 0.5s cubic-bezier(.2,.7,.3,1), background 0.4s, border-color 0.4s, box-shadow 0.5s;
+  transform-style: preserve-3d;
+  will-change: transform;
+  cursor: default;
+  overflow: hidden;
+}
+.bl-service-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--bl-yellow);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.5s cubic-bezier(.2,.7,.3,1);
+}
+.bl-service-card:hover::before { transform: scaleX(1); }
+.bl-service-card::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(253,213,53,0.08) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.bl-service-card:hover::after { opacity: 1; }
+.bl-service-card:hover {
+  transform: translateY(-6px) translateZ(20px);
+  border-color: rgba(253,213,53,0.2);
+  background: linear-gradient(160deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+  box-shadow: 0 20px 60px -15px rgba(253,213,53,0.12), 0 0 0 1px rgba(253,213,53,0.1) inset;
+}
+.bl-service-card__num {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.3em;
+  color: var(--bl-yellow); opacity: 0.6;
+  transition: opacity 0.3s;
+}
+.bl-service-card:hover .bl-service-card__num { opacity: 1; }
+.bl-service-card__name {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(18px, 1.6vw, 24px);
+  letter-spacing: -0.01em; line-height: 1.15;
+  color: #fff;
+}
+.bl-service-card__desc {
+  font-family: var(--font-serif); font-style: italic; font-weight: 300;
+  font-size: 14px; line-height: 1.5;
+  color: rgba(255,255,255,0.5);
+  transition: color 0.3s;
+}
+.bl-service-card:hover .bl-service-card__desc { color: rgba(255,255,255,0.7); }
+.bl-service-card__bar {
+  width: 0; height: 2px;
+  background: var(--bl-yellow);
+  transition: width 0.5s cubic-bezier(.2,.7,.3,1);
+}
+.bl-service-card:hover .bl-service-card__bar { width: 40px; }
+@media (max-width: 1100px) {
+  .bl-services-3d__grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 900px) {
+  .bl-services-3d { padding: 72px 22px; }
+  .bl-services-3d__header { grid-template-columns: 1fr; gap: 32px; }
+  .bl-services-3d__grid { grid-template-columns: 1fr; gap: 14px; }
+  .bl-service-card { min-height: auto; padding: 24px 20px; }
+}
+
+/* ─────────────────────────────────────────────────────────
+   ABOUT — immersive parallax text reveal
+   ───────────────────────────────────────────────────────── */
+.bl-about-immersive {
+  position: relative;
+  overflow: hidden;
+  background: #0a0a0a;
+  color: #fff;
+}
+.bl-about-story {
+  position: relative;
+  padding: 120px 64px;
+  overflow: hidden;
+}
+.bl-about-story__bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 50% 40% at 80% 30%, rgba(253,213,53,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 50% at 10% 70%, rgba(253,213,53,0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+.bl-about-story__grid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 96px;
+  align-items: start;
+}
+.bl-about-big-text {
+  font-family: var(--font-display); font-weight: 700;
+  font-size: clamp(44px, 6vw, 80px);
+  letter-spacing: -0.03em; line-height: 0.95;
+  margin: 0 0 32px 0;
+}
+.bl-about-prose {
+  font-family: var(--font-serif); font-style: italic; font-weight: 300;
+  font-size: 18px; line-height: 1.65;
+  color: rgba(255,255,255,0.72);
+  margin: 0 0 24px 0;
+}
+.bl-about-prose:last-child { margin-bottom: 0; }
+.bl-about-accent-line {
+  display: block; width: 60px; height: 2px;
+  background: var(--bl-yellow);
+  margin: 40px 0;
+}
+.bl-about-float-shape {
+  position: absolute;
+  border: 1px solid rgba(253,213,53,0.1);
+  pointer-events: none;
+}
+@media (max-width: 900px) {
+  .bl-about-story { padding: 72px 22px; }
+  .bl-about-story__grid { grid-template-columns: 1fr; gap: 40px; }
 }

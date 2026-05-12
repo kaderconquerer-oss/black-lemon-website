@@ -72,53 +72,142 @@ const HomeHero = () => {
   );
 };
 
-// About — 2 founders, placeholder portraits + bios
-const HomeAbout = () => (
-  <section id="about" className="bl-section" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 96, marginBottom: 72, alignItems: 'flex-end' }}>
-      <Reveal>
-        <div className="bl-eyebrow" style={{ marginBottom: 32 }}>About the studio</div>
-        <h2 className="bl-h2">Two founders.<br/><span className="bl-italic" style={{ fontWeight: 300 }}>One studio, since 2019.</span></h2>
-        <YellowRule width="160px" height={3} delay={300} style={{ marginTop: 32 }} />
-      </Reveal>
-      <Reveal delay={200}>
-        <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 22, lineHeight: 1.5, opacity: 0.75, margin: 0 }}>
-          A small studio with a long memory — six years in Dubai, and a habit of saying no more often than yes. We started Black Lemon to make events that read like editorial: one strong idea, executed without hedging.
-        </p>
-      </Reveal>
-    </div>
+// About — immersive parallax with agency story
+const HomeAbout = () => {
+  const sectionRef = React.useRef(null);
+  const [progress, setProgress] = React.useState(0);
 
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64 }} className="bl-founders">
-      {[
-        { name: 'Hassan El Beyrouthy', role: 'Creative Director · Co-founder',
-          image: 'assets/hassan.jpg',
-          bio: 'A short bio about Hassan — background, taste, what he brings to the room. Replace this paragraph with the real one when ready. Two or three sentences feels about right.' },
-        { name: 'Founder Two', role: 'Production Director · Co-founder',
-          image: null,
-          bio: 'A short bio about Founder Two — background, taste, what they bring to the room. Replace this paragraph with the real one when ready. Two or three sentences feels about right.' },
-      ].map((f, i) => (
-        <Reveal key={f.name} delay={i * 150}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            {f.image ? (
-              <div style={{ width: '100%', aspectRatio: '4 / 5', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', background: '#0a0a0a' }}>
-                <img src={f.image} alt={f.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', filter: 'grayscale(0.15) contrast(1.02)' }} />
+  React.useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const el = sectionRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const p = 1 - (rect.top + rect.height) / (vh + rect.height);
+        setProgress(Math.max(0, Math.min(1, p)));
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
+  }, []);
+
+  return (
+    <section ref={sectionRef} id="about" className="bl-about-immersive">
+      {/* Founders row */}
+      <div className="bl-section" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 96, marginBottom: 72, alignItems: 'flex-end' }}>
+          <Reveal>
+            <div className="bl-eyebrow" style={{ marginBottom: 32 }}>About the studio</div>
+            <h2 className="bl-h2">Two founders.<br/><span className="bl-italic" style={{ fontWeight: 300 }}>One studio, since 2019.</span></h2>
+            <YellowRule width="160px" height={3} delay={300} style={{ marginTop: 32 }} />
+          </Reveal>
+          <Reveal delay={200}>
+            <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 22, lineHeight: 1.5, opacity: 0.75, margin: 0 }}>
+              A UAE-based experiential agency dedicated to creating bold, immersive, and unforgettable experiences.
+            </p>
+          </Reveal>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64 }} className="bl-founders">
+          {[
+            { name: 'Hassan El Beyrouthy', role: 'Creative Director · Co-founder',
+              image: 'assets/hassan.jpg',
+              bio: 'A short bio about Hassan — background, taste, what he brings to the room. Replace this paragraph with the real one when ready. Two or three sentences feels about right.' },
+            { name: 'Founder Two', role: 'Production Director · Co-founder',
+              image: null,
+              bio: 'A short bio about Founder Two — background, taste, what they bring to the room. Replace this paragraph with the real one when ready. Two or three sentences feels about right.' },
+          ].map((f, i) => (
+            <Reveal key={f.name} delay={i * 150}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+                {f.image ? (
+                  <div style={{ width: '100%', aspectRatio: '4 / 5', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', background: '#0a0a0a' }}>
+                    <img src={f.image} alt={f.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', filter: 'grayscale(0.15) contrast(1.02)' }} />
+                  </div>
+                ) : (
+                  <Placeholder label={`Portrait — ${f.name}`} style={{ width: '100%', aspectRatio: '4 / 5', border: '1px solid rgba(255,255,255,0.1)' }} />
+                )}
+                <div>
+                  <div className="bl-eyebrow" style={{ marginBottom: 8 }}>{f.role}</div>
+                  <h3 className="bl-h3" style={{ marginBottom: 16 }}>{f.name}</h3>
+                  <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 18, lineHeight: 1.6, opacity: 0.8, margin: 0 }}>
+                    {f.bio}
+                  </p>
+                </div>
               </div>
-            ) : (
-              <Placeholder label={`Portrait — ${f.name}`} style={{ width: '100%', aspectRatio: '4 / 5', border: '1px solid rgba(255,255,255,0.1)' }} />
-            )}
-            <div>
-              <div className="bl-eyebrow" style={{ marginBottom: 8 }}>{f.role}</div>
-              <h3 className="bl-h3" style={{ marginBottom: 16 }}>{f.name}</h3>
-              <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 18, lineHeight: 1.6, opacity: 0.8, margin: 0 }}>
-                {f.bio}
+            </Reveal>
+          ))}
+        </div>
+      </div>
+
+      {/* Immersive agency story */}
+      <div className="bl-about-story">
+        <div className="bl-about-story__bg" />
+        {/* Floating geometric shapes */}
+        <div className="bl-about-float-shape" style={{ width: 200, height: 200, borderRadius: '50%', top: '10%', right: '5%', transform: `translateY(${progress * -60}px)`, opacity: 0.4 }} />
+        <div className="bl-about-float-shape" style={{ width: 120, height: 120, top: '60%', left: '3%', transform: `translateY(${progress * -40}px) rotate(${progress * 15}deg)`, opacity: 0.3 }} />
+        <div className="bl-about-float-shape" style={{ width: 80, height: 80, borderRadius: '50%', top: '40%', right: '15%', transform: `translateY(${progress * -80}px)`, opacity: 0.2, borderColor: 'rgba(253,213,53,0.15)' }} />
+
+        <div className="bl-about-story__grid">
+          <div>
+            <Reveal>
+              <div className="bl-eyebrow" style={{ marginBottom: 32, color: 'var(--bl-yellow)' }}>The Black Lemon story</div>
+              <h2 className="bl-about-big-text">
+                Built from<br/>
+                <span className="bl-italic" style={{ fontWeight: 300, color: 'var(--bl-yellow)' }}>passion.</span>
+              </h2>
+            </Reveal>
+            <Reveal delay={150}>
+              <p className="bl-about-prose">
+                Black Lemon is a UAE-based experiential agency dedicated to creating bold, immersive, and unforgettable experiences. Built from a passion for creativity, premium execution, and meaningful client relationships, we go beyond traditional event management to craft moments that leave a lasting impact.
               </p>
-            </div>
+            </Reveal>
+            <Reveal delay={250}>
+              <span className="bl-about-accent-line" />
+              <p className="bl-about-prose">
+                From automotive launches, real estate showcases, VIP gatherings, and corporate events to mall activations, influencer experiences, pop-ups, and roadshows — we bring ideas to life through strategic thinking, creative direction, and attention to every detail.
+              </p>
+            </Reveal>
           </div>
-        </Reveal>
-      ))}
-    </div>
-  </section>
-);
+
+          <div style={{ paddingTop: 80 }}>
+            <Reveal delay={200}>
+              <p className="bl-about-prose">
+                At Black Lemon, we believe every project is an opportunity to create something remarkable. Our approach combines energy, innovation, and precision to deliver experiences that connect brands with people in authentic and memorable ways.
+              </p>
+            </Reveal>
+            <Reveal delay={300}>
+              <span className="bl-about-accent-line" />
+              <p className="bl-about-prose" style={{ color: 'rgba(255,255,255,0.9)', fontSize: 22 }}>
+                Driven by a vision to become one of the leading experiential agencies in the UAE and GCC, we are committed to pushing creative boundaries and delivering experiences designed to be remembered.
+              </p>
+            </Reveal>
+            <Reveal delay={400}>
+              <div style={{ marginTop: 48, display: 'flex', gap: 48 }}>
+                <div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 48, color: 'var(--bl-yellow)', letterSpacing: '-0.03em', lineHeight: 1 }}>6+</div>
+                  <div className="bl-eyebrow" style={{ marginTop: 8 }}>Years in Dubai</div>
+                </div>
+                <div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 48, color: 'var(--bl-yellow)', letterSpacing: '-0.03em', lineHeight: 1 }}>14</div>
+                  <div className="bl-eyebrow" style={{ marginTop: 8 }}>Disciplines</div>
+                </div>
+                <div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 48, color: 'var(--bl-yellow)', letterSpacing: '-0.03em', lineHeight: 1 }}>1</div>
+                  <div className="bl-eyebrow" style={{ marginTop: 8 }}>Studio</div>
+                </div>
+              </div>
+            </Reveal>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
 
 
 
@@ -293,54 +382,137 @@ const HomeStats = () => (
   </section>
 );
 
-// Studio note — single line, no scroll-jacking
-const HomeParallax = () => (
-  <section
-    id="studio-note"
-    className="bl-studio-note"
-    style={{
-      background: '#050505',
-      borderTop: '1px solid rgba(255,255,255,0.08)',
-      borderBottom: '1px solid rgba(255,255,255,0.08)',
-    }}
-  >
-    <div className="bl-studio-note__inner">
-      <div className="bl-eyebrow bl-studio-note__eyebrow">Studio note</div>
-      <p className="bl-studio-note__quote">
-        We light the room, <span className="bl-studio-note__accent">so the people light up.</span>
-      </p>
-      <p className="bl-studio-note__attr">Hassan El Beyrouthy · Founder</p>
-    </div>
-  </section>
-);
+// Studio note — immersive z-axis parallax
+const HomeParallax = () => {
+  const wrapRef = React.useRef(null);
+  const [scroll, setScroll] = React.useState(0);
 
-const HomeServices = () => (
-  <section id="services" style={{ background: '#f5f1ea', color: '#0a0a0a', padding: '120px 64px', borderTop: '1px solid rgba(0,0,0,0.08)' }}>
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 96, marginBottom: 80 }}>
-      <Reveal>
-        <div className="bl-eyebrow" style={{ marginBottom: 32 }}>What we do</div>
-        <h2 className="bl-h2">Full-service.<br/>Done with care.</h2>
-      </Reveal>
-      <Reveal delay={200}>
-        <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 22, lineHeight: 1.5, opacity: 0.75, marginTop: 24 }}>
-          From concept to cleanup — fourteen disciplines under one roof. Every event gets the same team, the same standards, the same attention.
-        </p>
-      </Reveal>
-    </div>
-    <div style={{ borderTop: '1px solid rgba(0,0,0,0.15)' }}>
-      {SERVICES.map((s, i) => (
-        <Reveal key={s.num} delay={i * 40}>
-          <div className="bl-row" style={{ display: 'grid', gridTemplateColumns: '60px 1.2fr 2.2fr 60px', gap: 24, padding: '28px 0', borderBottom: '1px solid rgba(0,0,0,0.15)', alignItems: 'baseline' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, opacity: 0.4 }}>{s.num}</div>
-            <div className="bl-h3" style={{ fontSize: 'clamp(18px, 2vw, 26px)' }}>{s.name}</div>
-            <div style={{ fontSize: 15, lineHeight: 1.55, opacity: 0.65, fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300 }}>{s.desc}</div>
-            <div style={{ textAlign: 'right' }}><BLIcon name="arrow" size={18} color="#0a0a0a" accent="var(--bl-yellow)" /></div>
-          </div>
-        </Reveal>
+  React.useEffect(() => {
+    let raf = 0;
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        const el = wrapRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const progress = 1 - (rect.top + rect.height) / (vh + rect.height);
+        setScroll(Math.max(0, Math.min(1, progress)));
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+    return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
+  }, []);
+
+  const p = (scroll - 0.3) * 2.5; // normalize to center of section
+  const particles = React.useMemo(() =>
+    Array.from({ length: 18 }, (_, i) => ({
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      delay: Math.random() * 6,
+      size: 2 + Math.random() * 3,
+      speed: 0.3 + Math.random() * 0.7,
+    })), []);
+
+  return (
+    <section ref={wrapRef} className="bl-parallax-wrap" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      {/* Depth grid */}
+      <div className="bl-parallax-depth">
+        <div className="bl-parallax-grid" style={{ transform: `translateZ(${-200 + p * 60}px) scale(${1.3 - p * 0.1})` }} />
+      </div>
+
+      {/* Concentric rings */}
+      <div className="bl-parallax-depth" style={{ transform: `translateZ(${-100 + p * 40}px)` }}>
+        <div className="bl-parallax-ring bl-parallax-ring--1" style={{ opacity: 0.3 + scroll * 0.4 }} />
+        <div className="bl-parallax-ring bl-parallax-ring--2" style={{ opacity: 0.15 + scroll * 0.2 }} />
+        <div className="bl-parallax-ring bl-parallax-ring--3" style={{ opacity: 0.08 + scroll * 0.12 }} />
+      </div>
+
+      {/* Vertical accent lines */}
+      <div className="bl-parallax-line" style={{ height: '30%', top: 0, transform: `translateZ(${-50 + p * 30}px) translateX(-200px)`, opacity: 0.3 }} />
+      <div className="bl-parallax-line" style={{ height: '40%', bottom: 0, top: 'auto', transform: `translateZ(${-80 + p * 20}px) translateX(200px)`, opacity: 0.2 }} />
+
+      {/* Floating particles */}
+      {particles.map((pt, i) => (
+        <div key={i} className="bl-parallax-particle" style={{
+          left: `${pt.x}%`, top: `${pt.y}%`,
+          width: pt.size, height: pt.size,
+          animationDelay: `${pt.delay}s`,
+          animationDuration: `${4 + pt.speed * 4}s`,
+          transform: `translateZ(${-30 + pt.speed * 60}px)`,
+        }} />
       ))}
-    </div>
-  </section>
-);
+
+      {/* Atmospheric fog */}
+      <div className="bl-parallax-fog" />
+
+      {/* Content */}
+      <div className="bl-parallax-content" style={{
+        transform: `translateZ(${p * 50}px) scale(${0.92 + scroll * 0.08})`,
+        opacity: 0.4 + scroll * 0.6,
+      }}>
+        <div className="bl-parallax-content__eyebrow">Studio note</div>
+        <p className="bl-parallax-content__quote">
+          We light the room, <span className="bl-parallax-content__accent">so the people light up.</span>
+        </p>
+        <p className="bl-parallax-content__attr">Hassan El Beyrouthy · Founder</p>
+      </div>
+    </section>
+  );
+};
+
+const HomeServices = () => {
+  const onCardMove = (e) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    card.style.setProperty('--mx', x + '%');
+    card.style.setProperty('--my', y + '%');
+  };
+
+  return (
+    <section id="services" className="bl-services-3d">
+      {/* Subtle background grid */}
+      <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(253,213,53,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(253,213,53,0.02) 1px, transparent 1px)', backgroundSize: '60px 60px', maskImage: 'radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%)', WebkitMaskImage: 'radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%)', pointerEvents: 'none' }} />
+
+      <div className="bl-services-3d__header" style={{ position: 'relative' }}>
+        <Reveal>
+          <div className="bl-eyebrow" style={{ marginBottom: 32, color: 'var(--bl-yellow)' }}>What we do</div>
+          <h2 className="bl-h2">Full-service.<br/><span className="bl-italic" style={{ fontWeight: 300 }}>Done with care.</span></h2>
+          <YellowRule width="120px" height={2} delay={300} style={{ marginTop: 32 }} />
+        </Reveal>
+        <Reveal delay={200}>
+          <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 22, lineHeight: 1.5, opacity: 0.6, marginTop: 24 }}>
+            From concept to cleanup — fourteen disciplines under one roof. Every event gets the same team, the same standards, the same attention.
+          </p>
+        </Reveal>
+      </div>
+
+      <div className="bl-services-3d__grid" style={{ position: 'relative' }}>
+        {SERVICES.map((s, i) => (
+          <Reveal key={s.num} delay={i * 50}>
+            <div
+              className="bl-service-card"
+              onMouseMove={onCardMove}
+            >
+              <div>
+                <div className="bl-service-card__num">{s.num}</div>
+                <div className="bl-service-card__name" style={{ marginTop: 16 }}>{s.name}</div>
+              </div>
+              <div>
+                <div className="bl-service-card__desc">{s.desc}</div>
+                <div className="bl-service-card__bar" style={{ marginTop: 16 }} />
+              </div>
+            </div>
+          </Reveal>
+        ))}
+      </div>
+    </section>
+  );
+};
 
 const HomeWork = () => {
   const featured = CASE_STUDIES.slice(0, 6);
