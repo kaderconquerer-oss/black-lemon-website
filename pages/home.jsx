@@ -418,6 +418,9 @@ const HomeParallax = () => {
 
   return (
     <section ref={wrapRef} className="bl-parallax-wrap" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+      {/* Dubai skyline background */}
+      <div className="bl-parallax-bg-img" style={{ transform: `scale(${1.1 + scroll * 0.1}) translateY(${(scroll - 0.5) * -30}px)` }} />
+
       {/* Depth grid */}
       <div className="bl-parallax-depth">
         <div className="bl-parallax-grid" style={{ transform: `translateZ(${-200 + p * 60}px) scale(${1.3 - p * 0.1})` }} />
@@ -606,7 +609,6 @@ const HomeClients = () => {
     });
   }, []);
 
-  /** Desktop columns — matches default grid; CSS overrides column count below 900px. Hover uses real cells, not coordinate math. */
   const COLS = 7;
 
   const onMove = (e) => {
@@ -621,9 +623,6 @@ const HomeClients = () => {
   const onCardEnter = (idx) => {
     const t = targetRef.current;
     targetRef.current = { ...t, hoverIdx: idx, active: true };
-    // #region agent log
-    fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeClients:onCardEnter', message: 'cardEnter', data: { hypothesisId: 'H1', idx, isCta: idx === CLIENTS.length, innerWidth: typeof window !== 'undefined' ? window.innerWidth : 0 }, timestamp: Date.now(), runId: 'verify-fix' }) }).catch(() => {});
-    // #endregion
     if (!rafRef.current) rafRef.current = requestAnimationFrame(tick);
   };
 
@@ -633,7 +632,6 @@ const HomeClients = () => {
   };
   React.useEffect(() => () => cancelAnimationFrame(rafRef.current), []);
 
-  // Whole-grid tilt that follows the mouse — small, elegant, controlled.
   const gridRotX = m.active ? (0.5 - m.y) * 8 : 0;
   const gridRotY = m.active ? (m.x - 0.5) * 10 : 0;
 
@@ -667,24 +665,28 @@ const HomeClients = () => {
         >
           {CLIENTS.map((c, i) => {
             const isHover = i === m.hoverIdx && m.active;
-            const isLong = c.length > 14;
             return (
               <div
-                key={c}
+                key={c.name}
                 role="presentation"
                 onMouseEnter={() => onCardEnter(i)}
-                className={`bl-client-card-v2${isHover ? ' is-hover' : ''}`}
-                style={{ transform: isHover ? 'translateZ(40px)' : 'translateZ(0)' }}
+                className={`bl-client-card-v2 bl-client-logo-card${isHover ? ' is-hover' : ''}`}
+                style={{ transform: isHover ? 'translateZ(40px) scale(1.06)' : 'translateZ(0) scale(1)' }}
               >
                 <span className="bl-client-card-v2__num">{String(i + 1).padStart(2, '0')}</span>
-                <span className="bl-client-card-v2__name" style={{ fontSize: isLong ? 'clamp(12px, 1.1vw, 15px)' : 'clamp(15px, 1.4vw, 20px)', letterSpacing: isLong ? '0.01em' : '-0.005em' }}>
-                  {c}
-                </span>
+                <div className="bl-client-logo-wrap">
+                  <img
+                    src={c.logo}
+                    alt={c.name}
+                    className="bl-client-logo-img"
+                    loading="lazy"
+                  />
+                </div>
                 <span className="bl-client-card-v2__rule" />
               </div>
             );
           })}
-          {/* 22nd cell — CTA, spans full row, jumps to contact */}
+          {/* CTA row */}
           <a
             href="#contact"
             onMouseEnter={() => onCardEnter(CLIENTS.length)}
@@ -693,7 +695,7 @@ const HomeClients = () => {
           >
             <span className="bl-client-card-v2__num">{String(CLIENTS.length + 1).padStart(2, '0')}</span>
             <span className="bl-client-card-v2-cta__line">
-              <span className="bl-client-card-v2-cta__text">Ready to be number 22?</span>
+              <span className="bl-client-card-v2-cta__text">Ready to be number {CLIENTS.length + 1}?</span>
               <span className="bl-client-card-v2-cta__arrow" aria-hidden="true">→</span>
             </span>
             <span className="bl-client-card-v2__rule" />

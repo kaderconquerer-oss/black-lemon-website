@@ -47,10 +47,27 @@ const JOURNAL = [
 ];
 
 const CLIENTS = [
-  'F1', 'Philips', 'Sephora', 'Lucid', 'Mario Makeup',
-  'Aldar', 'Lapies', 'Ariel', 'Marsh', 'Public Art Abu Dhabi',
-  'BMW', 'Jotun', 'Department of Culture & Tourism', 'Audi', 'Gillette',
-  'JAG', 'Range', 'A2RL', 'Aspire', 'Electrolux', 'Tide',
+  { name: 'F1', logo: 'assets/logo-f1.png' },
+  { name: 'Philips', logo: 'assets/logo-philips.png' },
+  { name: 'Sephora', logo: 'assets/logo-sephora.png' },
+  { name: 'Lucid', logo: 'assets/logo-lucid.png' },
+  { name: 'Mario Makeup', logo: 'assets/logo-mario-makeup.png' },
+  { name: 'Aldar', logo: 'assets/logo-aldar.png' },
+  { name: 'Lapies', logo: 'assets/logo-lapies.png' },
+  { name: 'Ariel', logo: 'assets/logo-ariel.png' },
+  { name: 'Marsh', logo: 'assets/logo-marsh.png' },
+  { name: 'Public Art Abu Dhabi', logo: 'assets/logo-public-art.png' },
+  { name: 'BMW', logo: 'assets/logo-bmw.png' },
+  { name: 'Jotun', logo: 'assets/logo-jotun.png' },
+  { name: 'Department of Culture & Tourism', logo: 'assets/logo-dct.png' },
+  { name: 'Audi', logo: 'assets/logo-audi.png' },
+  { name: 'Gillette', logo: 'assets/logo-gillette.png' },
+  { name: 'JAG', logo: 'assets/logo-jag.png' },
+  { name: 'Range', logo: 'assets/logo-range.png' },
+  { name: 'A2RL', logo: 'assets/logo-a2rl.png' },
+  { name: 'Aspire', logo: 'assets/logo-aspire.png' },
+  { name: 'Electrolux', logo: 'assets/logo-electrolux.png' },
+  { name: 'Tide', logo: 'assets/logo-tide.png' },
 ];
 
 const MENA_CITIES = [
