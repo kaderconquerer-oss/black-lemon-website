@@ -1221,11 +1221,13 @@ section#clients { background: #070707 !important; }
   max-width: 80%;
   max-height: 48px;
   object-fit: contain;
-  filter: brightness(0) invert(1) opacity(0.55);
-  transition: filter 0.45s cubic-bezier(.2,.7,.3,1), transform 0.45s cubic-bezier(.2,.7,.3,1);
+  filter: grayscale(1) brightness(1.6) contrast(0.9);
+  opacity: 0.5;
+  transition: filter 0.45s cubic-bezier(.2,.7,.3,1), transform 0.45s cubic-bezier(.2,.7,.3,1), opacity 0.45s;
 }
 .bl-client-logo-card.is-hover .bl-client-logo-img {
-  filter: brightness(0) invert(1) opacity(1);
+  filter: grayscale(0) brightness(1) contrast(1);
+  opacity: 1;
   transform: scale(1.12);
 }
 .bl-client-logo-card.is-hover {
@@ -1251,4 +1253,15 @@ section#clients { background: #070707 !important; }
   filter: grayscale(0.6) contrast(1.1);
   pointer-events: none;
   transition: transform 0.1s linear;
+}
+
+/* Scan line animation */
+@keyframes bl-scanline {
+  0% { transform: translateX(-5%) scaleX(0.8); opacity: 0.3; }
+  100% { transform: translateX(5%) scaleX(1.2); opacity: 0.8; }
+}
+/* Parallax wrap — ensure taller for scroll-through */
+.bl-parallax-wrap { min-height: 110vh; }
+@media (max-width: 900px) {
+  .bl-parallax-wrap { min-height: 90vh; }
 }

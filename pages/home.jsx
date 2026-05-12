@@ -386,7 +386,10 @@ const HomeStats = () => (
 const HomeParallax = () => {
   const wrapRef = React.useRef(null);
   const [scroll, setScroll] = React.useState(0);
+  const [mouse, setMouse] = React.useState({ x: 0.5, y: 0.5, active: false });
+  const smoothMouse = React.useRef({ x: 0.5, y: 0.5 });
 
+  // Scroll tracking
   React.useEffect(() => {
     let raf = 0;
     const onScroll = () => {
@@ -406,61 +409,198 @@ const HomeParallax = () => {
     return () => { window.removeEventListener('scroll', onScroll); cancelAnimationFrame(raf); };
   }, []);
 
-  const p = (scroll - 0.3) * 2.5; // normalize to center of section
+  // Mouse tracking with smooth easing
+  React.useEffect(() => {
+    let raf = 0;
+    const tick = () => {
+      const s = smoothMouse.current;
+      const dx = mouse.x - s.x;
+      const dy = mouse.y - s.y;
+      s.x += dx * 0.08;
+      s.y += dy * 0.08;
+      if (Math.abs(dx) > 0.001 || Math.abs(dy) > 0.001) {
+        raf = requestAnimationFrame(tick);
+      } else { raf = 0; }
+      // Force re-render via scroll (piggyback)
+      if (wrapRef.current) {
+        wrapRef.current.style.setProperty('--mx', s.x);
+        wrapRef.current.style.setProperty('--my', s.y);
+      }
+    };
+    if (mouse.active && !raf) raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [mouse]);
+
+  const onMouseMove = (e) => {
+    const rect = wrapRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    setMouse({ x: Math.max(0, Math.min(1, x)), y: Math.max(0, Math.min(1, y)), active: true });
+  };
+  const onMouseLeave = () => setMouse(m => ({ ...m, active: false }));
+
+  const p = (scroll - 0.3) * 2.5;
+  const mx = smoothMouse.current.x;
+  const my = smoothMouse.current.y;
+  const tiltX = mouse.active ? (0.5 - my) * 12 : 0;
+  const tiltY = mouse.active ? (mx - 0.5) * 15 : 0;
+
+  // Generate particles + scan lines
   const particles = React.useMemo(() =>
-    Array.from({ length: 18 }, (_, i) => ({
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      delay: Math.random() * 6,
-      size: 2 + Math.random() * 3,
-      speed: 0.3 + Math.random() * 0.7,
+    Array.from({ length: 35 }, (_, i) => ({
+      x: Math.random() * 100, y: Math.random() * 100,
+      delay: Math.random() * 8, size: 1.5 + Math.random() * 3,
+      speed: 0.2 + Math.random() * 0.8, bright: Math.random() > 0.7,
     })), []);
 
+  const scanLines = React.useMemo(() =>
+    Array.from({ length: 6 }, (_, i) => ({
+      y: 15 + i * 14, width: 30 + Math.random() * 40,
+      delay: i * 1.2, speed: 3 + Math.random() * 4,
+    })), []);
+
+  // Quote text split for letter animation
+  const line1 = "We light the room,";
+  const line2 = "so the people light up.";
+
+  // Visibility based on scroll — letters reveal as you scroll through
+  const textReveal = Math.max(0, Math.min(1, (scroll - 0.2) / 0.4));
+  const totalChars = line1.length + line2.length;
+
   return (
-    <section ref={wrapRef} className="bl-parallax-wrap" style={{ borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-      {/* Dubai skyline background */}
-      <div className="bl-parallax-bg-img" style={{ transform: `scale(${1.1 + scroll * 0.1}) translateY(${(scroll - 0.5) * -30}px)` }} />
+    <section
+      ref={wrapRef}
+      className="bl-parallax-wrap"
+      onMouseMove={onMouseMove}
+      onMouseLeave={onMouseLeave}
+      style={{ borderTop: '1px solid rgba(255,255,255,0.06)', borderBottom: '1px solid rgba(255,255,255,0.06)', cursor: 'crosshair' }}
+    >
+      {/* Dubai skyline — deep bg layer, reacts to mouse */}
+      <div className="bl-parallax-bg-img" style={{
+        transform: `scale(${1.15 + scroll * 0.1}) translate(${(mx - 0.5) * -20}px, ${(my - 0.5) * -15 + (scroll - 0.5) * -30}px)`,
+        opacity: 0.08 + scroll * 0.08,
+      }} />
 
-      {/* Depth grid */}
-      <div className="bl-parallax-depth">
-        <div className="bl-parallax-grid" style={{ transform: `translateZ(${-200 + p * 60}px) scale(${1.3 - p * 0.1})` }} />
+      {/* 3D scene container — tilts with mouse */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        perspective: '1000px', perspectiveOrigin: '50% 50%',
+        pointerEvents: 'none',
+      }}>
+        <div style={{
+          position: 'absolute', inset: 0,
+          transform: `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`,
+          transformStyle: 'preserve-3d',
+          transition: 'transform 0.3s cubic-bezier(.2,.7,.3,1)',
+        }}>
+          {/* Grid layer — deep */}
+          <div className="bl-parallax-grid" style={{ transform: 'translateZ(-300px) scale(1.6)', opacity: 0.4 + scroll * 0.3 }} />
+
+          {/* Concentric rings */}
+          <div className="bl-parallax-ring bl-parallax-ring--1" style={{ opacity: 0.2 + scroll * 0.5, transform: `translateZ(${-150 + p * 40}px)` }} />
+          <div className="bl-parallax-ring bl-parallax-ring--2" style={{ opacity: 0.1 + scroll * 0.25, transform: `translateZ(${-200 + p * 30}px)` }} />
+          <div className="bl-parallax-ring bl-parallax-ring--3" style={{ opacity: 0.06 + scroll * 0.15, transform: `translateZ(${-250 + p * 20}px)` }} />
+
+          {/* Vertical accent lines at different depths */}
+          {[-250, -120, 80, 200].map((xOff, i) => (
+            <div key={i} className="bl-parallax-line" style={{
+              height: `${20 + i * 10}%`,
+              top: i % 2 === 0 ? 0 : 'auto', bottom: i % 2 === 0 ? 'auto' : 0,
+              transform: `translateZ(${-80 + i * 30}px) translateX(${xOff}px)`,
+              opacity: 0.15 + scroll * 0.15,
+            }} />
+          ))}
+
+          {/* Horizontal scan lines — tech feel */}
+          {scanLines.map((sl, i) => (
+            <div key={i} style={{
+              position: 'absolute', left: 0, right: 0, top: `${sl.y}%`,
+              height: '1px',
+              background: `linear-gradient(90deg, transparent 10%, rgba(253,213,53,${0.06 + scroll * 0.06}) 30%, rgba(253,213,53,${0.12 + scroll * 0.1}) 50%, rgba(253,213,53,${0.06 + scroll * 0.06}) 70%, transparent 90%)`,
+              transform: `translateZ(${-60 + i * 20}px)`,
+              animation: `bl-scanline ${sl.speed}s ease-in-out ${sl.delay}s infinite alternate`,
+              pointerEvents: 'none',
+            }} />
+          ))}
+
+          {/* Particles — more, varied */}
+          {particles.map((pt, i) => (
+            <div key={i} style={{
+              position: 'absolute',
+              left: `${pt.x}%`, top: `${pt.y}%`,
+              width: pt.size, height: pt.size,
+              background: pt.bright ? '#fff' : 'var(--bl-yellow)',
+              borderRadius: '50%',
+              boxShadow: pt.bright ? '0 0 8px rgba(255,255,255,0.5)' : `0 0 12px rgba(253,213,53,${0.3 + pt.speed * 0.4})`,
+              opacity: 0,
+              transform: `translateZ(${-50 + pt.speed * 80}px)`,
+              animation: `bl-particle-float ${4 + pt.speed * 5}s ease-in-out ${pt.delay}s infinite`,
+              pointerEvents: 'none',
+            }} />
+          ))}
+        </div>
       </div>
-
-      {/* Concentric rings */}
-      <div className="bl-parallax-depth" style={{ transform: `translateZ(${-100 + p * 40}px)` }}>
-        <div className="bl-parallax-ring bl-parallax-ring--1" style={{ opacity: 0.3 + scroll * 0.4 }} />
-        <div className="bl-parallax-ring bl-parallax-ring--2" style={{ opacity: 0.15 + scroll * 0.2 }} />
-        <div className="bl-parallax-ring bl-parallax-ring--3" style={{ opacity: 0.08 + scroll * 0.12 }} />
-      </div>
-
-      {/* Vertical accent lines */}
-      <div className="bl-parallax-line" style={{ height: '30%', top: 0, transform: `translateZ(${-50 + p * 30}px) translateX(-200px)`, opacity: 0.3 }} />
-      <div className="bl-parallax-line" style={{ height: '40%', bottom: 0, top: 'auto', transform: `translateZ(${-80 + p * 20}px) translateX(200px)`, opacity: 0.2 }} />
-
-      {/* Floating particles */}
-      {particles.map((pt, i) => (
-        <div key={i} className="bl-parallax-particle" style={{
-          left: `${pt.x}%`, top: `${pt.y}%`,
-          width: pt.size, height: pt.size,
-          animationDelay: `${pt.delay}s`,
-          animationDuration: `${4 + pt.speed * 4}s`,
-          transform: `translateZ(${-30 + pt.speed * 60}px)`,
-        }} />
-      ))}
 
       {/* Atmospheric fog */}
       <div className="bl-parallax-fog" />
 
-      {/* Content */}
+      {/* Vignette edges */}
+      <div style={{
+        position: 'absolute', inset: 0, pointerEvents: 'none',
+        boxShadow: 'inset 0 0 200px 60px rgba(2,2,2,0.8)',
+      }} />
+
+      {/* Content — letter-by-letter reveal */}
       <div className="bl-parallax-content" style={{
-        transform: `translateZ(${p * 50}px) scale(${0.92 + scroll * 0.08})`,
-        opacity: 0.4 + scroll * 0.6,
+        transform: `translateZ(${p * 40}px) rotateX(${tiltX * 0.3}deg) rotateY(${tiltY * 0.3}deg)`,
+        transition: 'transform 0.3s cubic-bezier(.2,.7,.3,1)',
       }}>
-        <div className="bl-parallax-content__eyebrow">Studio note</div>
-        <p className="bl-parallax-content__quote">
-          We light the room, <span className="bl-parallax-content__accent">so the people light up.</span>
+        <div className="bl-parallax-content__eyebrow" style={{
+          opacity: textReveal > 0.05 ? 1 : 0,
+          transform: textReveal > 0.05 ? 'translateY(0)' : 'translateY(20px)',
+          transition: 'opacity 0.8s, transform 0.8s cubic-bezier(.2,.7,.3,1)',
+        }}>Studio note</div>
+
+        <p className="bl-parallax-content__quote" style={{ overflow: 'visible' }}>
+          {line1.split('').map((char, i) => {
+            const charProgress = (textReveal * totalChars - i) / 3;
+            const vis = Math.max(0, Math.min(1, charProgress));
+            return (
+              <span key={i} style={{
+                display: 'inline-block',
+                opacity: vis,
+                transform: `translateY(${(1 - vis) * 30}px) translateZ(${(1 - vis) * 40}px)`,
+                transition: 'none',
+                textShadow: vis > 0.8 ? '0 0 30px rgba(255,255,255,0.15)' : 'none',
+                whiteSpace: char === ' ' ? 'pre' : undefined,
+              }}>{char === ' ' ? '\u00A0' : char}</span>
+            );
+          })}
+          <br/>
+          <span className="bl-parallax-content__accent">
+            {line2.split('').map((char, i) => {
+              const charProgress = (textReveal * totalChars - (line1.length + i)) / 3;
+              const vis = Math.max(0, Math.min(1, charProgress));
+              return (
+                <span key={i} style={{
+                  display: 'inline-block',
+                  opacity: vis,
+                  transform: `translateY(${(1 - vis) * 30}px) translateZ(${(1 - vis) * 40}px)`,
+                  transition: 'none',
+                  textShadow: vis > 0.8 ? '0 0 40px rgba(253,213,53,0.3), 0 0 80px rgba(253,213,53,0.15)' : 'none',
+                  whiteSpace: char === ' ' ? 'pre' : undefined,
+                }}>{char === ' ' ? '\u00A0' : char}</span>
+              );
+            })}
+          </span>
         </p>
-        <p className="bl-parallax-content__attr">Hassan El Beyrouthy · Founder</p>
+
+        <p className="bl-parallax-content__attr" style={{
+          opacity: textReveal > 0.9 ? 1 : 0,
+          transform: textReveal > 0.9 ? 'translateY(0)' : 'translateY(16px)',
+          transition: 'opacity 1s ease 0.3s, transform 1s cubic-bezier(.2,.7,.3,1) 0.3s',
+        }}>Hassan El Beyrouthy · Founder</p>
       </div>
     </section>
   );

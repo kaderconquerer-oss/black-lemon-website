@@ -1,7 +1,7 @@
 // Black Lemon — site data (case studies, services, journal)
 
 const NAV = [
-  { id: 'home', label: 'Home', href: '#/home' },
+  { id: 'home', label: 'Home', href: '#/home' }, 
   { id: 'work', label: 'Work', href: '#/work' },
   { id: 'services', label: 'Services', href: '#/services' },
   { id: 'studio', label: 'Studio', href: '#/studio' },
