@@ -32,7 +32,18 @@ const CursorBar = () => {
     document.body.appendChild(ring);
 
     let visible = false;
+    // #region agent log
+    let moveN = 0;
+    const tickMove = () => { moveN++; };
+    let flush = setInterval(() => {
+      if (moveN) {
+        fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'primitives.jsx:CursorBar', message: 'mousemove1s', data: { hypothesisId: 'B', count: moveN }, timestamp: Date.now(), runId: 'pre-fix' }) }).catch(() => {});
+        moveN = 0;
+      }
+    }, 1000);
+    // #endregion
     const onMove = (e) => {
+      tickMove();
       ring.style.transform = `translate3d(${e.clientX - 14}px, ${e.clientY - 14}px, 0)`;
       if (!visible) { ring.style.opacity = '1'; visible = true; }
     };
@@ -47,6 +58,9 @@ const CursorBar = () => {
     window.addEventListener('mouseout', (e) => { if (!e.relatedTarget) onLeave(); });
     document.addEventListener('mouseover', onOver);
     return () => {
+      // #region agent log
+      clearInterval(flush);
+      // #endregion
       window.removeEventListener('mousemove', onMove);
       document.removeEventListener('mouseover', onOver);
       ring.remove();

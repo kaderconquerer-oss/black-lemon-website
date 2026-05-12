@@ -4,13 +4,54 @@ const HomeHero = () => {
   // Kinetic hero: oversized type with cycling word
   const words = ['Galas.', 'Launches.', 'Weddings.', 'Festivals.', 'Town halls.', 'Dinners.'];
   const [i, setI] = React.useState(0);
+  // #region agent log
+  const heroDbgMount = React.useRef(0);
+  const heroSectionRef = React.useRef(null);
+  heroDbgMount.current += 1;
+  React.useEffect(() => {
+    fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeHero', message: 'mount', data: { hypothesisId: 'A', renderCount: heroDbgMount.current }, timestamp: Date.now(), runId: 'pre-fix' }) }).catch(() => {});
+  }, []);
+  React.useEffect(() => {
+    fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeHero', message: 'wordIndexTick', data: { hypothesisId: 'A', i }, timestamp: Date.now(), runId: 'pre-fix' }) }).catch(() => {});
+  }, [i]);
+  React.useEffect(() => {
+    let po;
+    try {
+      po = new PerformanceObserver((list) => {
+        for (const e of list.getEntries()) {
+          if (e.duration >= 48) {
+            fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeHero', message: 'longtask', data: { hypothesisId: 'E', durationMs: Math.round(e.duration), name: e.name || '' }, timestamp: Date.now(), runId: 'pre-fix' }) }).catch(() => {});
+          }
+        }
+      });
+      po.observe({ type: 'longtask', buffered: true });
+    } catch (_) { /* longtask not supported */ }
+    return () => { try { po && po.disconnect(); } catch (_) {} };
+  }, []);
+  // #endregion
+  React.useEffect(() => {
+    const el = heroSectionRef.current;
+    if (!el) return;
+    // #region agent log
+    let prev = null;
+    const io = new IntersectionObserver(([e]) => {
+      const is = e.isIntersecting;
+      if (prev !== null && prev !== is) {
+        fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:heroIo', message: 'visibilityToggle', data: { hypothesisId: 'D', isIntersecting: is, ratio: e.intersectionRatio }, timestamp: Date.now(), runId: 'pre-fix' }) }).catch(() => {});
+      }
+      prev = is;
+    }, { threshold: [0, 0.15, 0.5, 1] });
+    io.observe(el);
+    return () => io.disconnect();
+    // #endregion
+  }, []);
   React.useEffect(() => {
     const t = setInterval(() => setI(x => (x + 1) % words.length), 2200);
     return () => clearInterval(t);
   }, []);
 
   return (
-    <section id="hero" className="bl-hero" style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: '128px 64px 96px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <section id="hero" ref={heroSectionRef} className="bl-hero" style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: '128px 64px 96px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Top meta — subtle, top-right, yellow */}
       <div className="bl-hero-meta">
         <span className="bl-hero-meta__dot" aria-hidden="true" />
