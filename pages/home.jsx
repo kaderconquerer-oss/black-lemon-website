@@ -7,11 +7,7 @@ const HeroRotatingWords = ({ words }) => {
     const t = setInterval(() => setI(x => (x + 1) % words.length), 2200);
     return () => clearInterval(t);
   }, [words.length]);
-  // #region agent log
-  React.useEffect(() => {
-    fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HeroRotatingWords', message: 'wordIndexTick', data: { hypothesisId: 'A', i, isolated: true }, timestamp: Date.now(), runId: 'post-fix' }) }).catch(() => {});
-  }, [i]);
-  // #endregion
+
   return (
     <span style={{ position: 'relative', display: 'inline-block', minWidth: '6ch' }}>
       {words.map((w, idx) => (
@@ -31,47 +27,9 @@ const HeroRotatingWords = ({ words }) => {
 
 const HomeHero = () => {
   const words = ['Galas.', 'Launches.', 'Weddings.', 'Festivals.', 'Town halls.', 'Dinners.'];
-  // #region agent log
-  const heroDbgMount = React.useRef(0);
-  const heroSectionRef = React.useRef(null);
-  heroDbgMount.current += 1;
-  React.useEffect(() => {
-    fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeHero', message: 'mount', data: { hypothesisId: 'A', renderCount: heroDbgMount.current }, timestamp: Date.now(), runId: 'post-fix' }) }).catch(() => {});
-  }, []);
-  React.useEffect(() => {
-    let po;
-    try {
-      po = new PerformanceObserver((list) => {
-        for (const e of list.getEntries()) {
-          if (e.duration >= 48) {
-            fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeHero', message: 'longtask', data: { hypothesisId: 'E', durationMs: Math.round(e.duration), name: e.name || '' }, timestamp: Date.now(), runId: 'post-fix' }) }).catch(() => {});
-          }
-        }
-      });
-      po.observe({ type: 'longtask', buffered: true });
-    } catch (_) { /* longtask not supported */ }
-    return () => { try { po && po.disconnect(); } catch (_) {} };
-  }, []);
-  // #endregion
-  React.useEffect(() => {
-    const el = heroSectionRef.current;
-    if (!el) return;
-    // #region agent log
-    let prev = null;
-    const io = new IntersectionObserver(([e]) => {
-      const is = e.isIntersecting;
-      if (prev !== null && prev !== is) {
-        fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:heroIo', message: 'visibilityToggle', data: { hypothesisId: 'D', isIntersecting: is, ratio: e.intersectionRatio }, timestamp: Date.now(), runId: 'post-fix' }) }).catch(() => {});
-      }
-      prev = is;
-    }, { threshold: [0, 0.15, 0.5, 1] });
-    io.observe(el);
-    return () => io.disconnect();
-    // #endregion
-  }, []);
 
   return (
-    <section id="hero" ref={heroSectionRef} className="bl-hero" style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: '128px 64px 96px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <section id="hero" className="bl-hero" style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: '128px 64px 96px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Top meta — subtle, top-right, yellow */}
       <div className="bl-hero-meta">
         <span className="bl-hero-meta__dot" aria-hidden="true" />
@@ -460,6 +418,7 @@ const HomeManifesto = () => (
 // the cell under the cursor lifts forward with a yellow underline.
 const HomeClients = () => {
   const ref = React.useRef(null);
+  const dbgHoverLogRef = React.useRef(null);
   const rafRef = React.useRef(0);
   const targetRef = React.useRef({ x: 0.5, y: 0.5, active: false, hoverIdx: -1 });
   const [m, setM] = React.useState({ x: 0.5, y: 0.5, active: false, hoverIdx: -1 });
@@ -485,8 +444,15 @@ const HomeClients = () => {
     const y = (e.clientY - r.top) / r.height;
     const col = Math.min(COLS - 1, Math.max(0, Math.floor(x * COLS)));
     const row = Math.min(ROWS - 1, Math.max(0, Math.floor(y * ROWS)));
-    targetRef.current = { x, y, active: true, hoverIdx: row * COLS + col };
+    const hoverIdx = row * COLS + col;
+    targetRef.current = { x, y, active: true, hoverIdx };
     if (!rafRef.current) rafRef.current = requestAnimationFrame(tick);
+    // #region agent log
+    if (dbgHoverLogRef.current !== hoverIdx) {
+      dbgHoverLogRef.current = hoverIdx;
+      fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeClients:onMove', message: 'hoverIdxChange', data: { hypothesisId: 'H1', hoverIdx, row, col, y: Math.round(y * 1000) / 1000, gridW: Math.round(r.width), gridH: Math.round(r.height), innerWidth: typeof window !== 'undefined' ? window.innerWidth : 0 }, timestamp: Date.now(), runId: 'pre-fix' }) }).catch(() => {});
+    }
+    // #endregion
   };
   const onLeave = () => {
     targetRef.current = { x: 0.5, y: 0.5, active: false, hoverIdx: -1 };
