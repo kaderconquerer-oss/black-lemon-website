@@ -17,47 +17,29 @@ const HomeHero = () => {
         <span className="bl-hero-meta__text">Dubai · Operating since 2019</span>
       </div>
 
-      {/* Headline + scroll cue (same vertical band as “We make”) */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 40, paddingTop: 24 }}>
-        <div className="bl-hero-headline-row">
-          <Reveal>
-            <h1 className="bl-h1" style={{ maxWidth: 1500 }}>
-              We make<br/>
-              <span style={{ display: 'inline-flex', alignItems: 'baseline' }}>
-                <span style={{ display: 'inline-block', width: '0.06em', height: '0.85em', background: 'var(--bl-yellow)', alignSelf: 'center', marginRight: '0.08em' }} />
-                <span style={{ position: 'relative', display: 'inline-block', minWidth: '6ch' }}>
-                  {words.map((w, idx) => (
-                    <span key={idx} style={{
-                      position: idx === 0 ? 'relative' : 'absolute',
-                      left: 0, top: 0,
-                      opacity: idx === i ? 1 : 0,
-                      transform: idx === i ? 'translateY(0)' : 'translateY(20px)',
-                      transition: 'all 0.6s cubic-bezier(.2,.7,.3,1)',
-                      whiteSpace: 'nowrap',
-                    }}>{w}</span>
-                  ))}
-                </span>
-              </span>
-              <br/>
-              <span className="bl-italic" style={{ fontWeight: 300, fontSize: '0.7em' }}>People remember.</span>
-            </h1>
-          </Reveal>
-
-          <Reveal delay={450}>
-            <a href="#about" className="bl-scroll-cue" aria-label="Scroll to explore">
-              <span className="bl-scroll-cue__label" aria-hidden="true">
-                {'Scroll to explore'.split('').map((ch, idx) => (
-                  <span key={idx} className="bl-scroll-cue__char" style={{ animationDelay: `${idx * 0.06}s` }}>{ch === ' ' ? '\u00A0' : ch}</span>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 40, paddingTop: 24, minHeight: 0 }}>
+        <Reveal>
+          <h1 className="bl-h1" style={{ maxWidth: 1500 }}>
+            We make<br/>
+            <span style={{ display: 'inline-flex', alignItems: 'baseline' }}>
+              <span style={{ display: 'inline-block', width: '0.06em', height: '0.85em', background: 'var(--bl-yellow)', alignSelf: 'center', marginRight: '0.08em' }} />
+              <span style={{ position: 'relative', display: 'inline-block', minWidth: '6ch' }}>
+                {words.map((w, idx) => (
+                  <span key={idx} style={{
+                    position: idx === 0 ? 'relative' : 'absolute',
+                    left: 0, top: 0,
+                    opacity: idx === i ? 1 : 0,
+                    transform: idx === i ? 'translateY(0)' : 'translateY(20px)',
+                    transition: 'all 0.6s cubic-bezier(.2,.7,.3,1)',
+                    whiteSpace: 'nowrap',
+                  }}>{w}</span>
                 ))}
               </span>
-              <span className="bl-scroll-cue__track" aria-hidden="true">
-                <span className="bl-scroll-cue__dot" />
-                <span className="bl-scroll-cue__dot bl-scroll-cue__dot--b" />
-              </span>
-              <span className="bl-scroll-cue__arrow" aria-hidden="true">↓</span>
-            </a>
-          </Reveal>
-        </div>
+            </span>
+            <br/>
+            <span className="bl-italic" style={{ fontWeight: 300, fontSize: '0.7em' }}>People remember.</span>
+          </h1>
+        </Reveal>
 
         <div className="bl-hero-bottom">
           <Reveal delay={300}>
@@ -66,6 +48,23 @@ const HomeHero = () => {
             </p>
           </Reveal>
         </div>
+      </div>
+
+      <div className="bl-hero-scroll">
+        <Reveal delay={450}>
+          <a href="#about" className="bl-scroll-cue" aria-label="Scroll to explore">
+            <span className="bl-scroll-cue__label" aria-hidden="true">
+              {'Scroll to explore'.split('').map((ch, idx) => (
+                <span key={idx} className="bl-scroll-cue__char" style={{ animationDelay: `${idx * 0.055}s` }}>{ch === ' ' ? '\u00A0' : ch}</span>
+              ))}
+            </span>
+            <span className="bl-scroll-cue__track" aria-hidden="true">
+              <span className="bl-scroll-cue__dot" />
+              <span className="bl-scroll-cue__dot bl-scroll-cue__dot--b" />
+            </span>
+            <span className="bl-scroll-cue__arrow" aria-hidden="true">↓</span>
+          </a>
+        </Reveal>
       </div>
     </section>
   );
@@ -322,9 +321,10 @@ const HomeParallax = () => {
     return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); cancelAnimationFrame(raf); };
   }, []);
 
-  // Section height: each token gets ~90vh of scroll + a 60vh outro. This
-  // locks the user inside the section until every word has been delivered.
-  const sectionHeight = `${TOKENS.length * 90 + 60}vh`;
+  // Scroll distance: enough runway per token; must match CSS (no fixed-height overrides).
+  const unitVh = 78;
+  const outroVh = 36;
+  const sectionHeight = `${TOKENS.length * unitVh + outroVh}vh`;
   const tail = 0.12;
 
   return (
@@ -339,7 +339,7 @@ const HomeParallax = () => {
         borderBottom: '1px solid rgba(255,255,255,0.08)',
       }}
     >
-      <div style={{ position: 'sticky', top: 0, height: '100vh', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="bl-tunnel-sticky" style={{ position: 'sticky', top: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         {/* Backdrop vignette */}
         <div aria-hidden style={{ position: 'absolute', inset: 0,
           background:
@@ -376,29 +376,38 @@ const HomeParallax = () => {
           })}
         </div>
 
-        {/* One word at a time — fade/scale/blur in & out */}
-        <div style={{ position: 'relative', width: 'min(1200px, 92vw)', height: 'min(420px, 60vh)' }}>
+        {/* One word at a time — 3D depth + fade (scroll-synced) */}
+        <div
+          className="bl-tunnel-stage"
+          style={{ position: 'relative', width: 'min(1200px, 92vw)', height: 'min(420px, 60vh)', perspective: 1100, transformStyle: 'preserve-3d' }}
+        >
           {TOKENS.map((word, i) => {
             const N = TOKENS.length;
             const start = i / N;
             const end = (i + 1) / N;
             const local = (t - start) / (end - start); // [0..1] is this word's window
+            const isLast = i === N - 1;
 
-            let opacity, scale, blur, yOff;
+            let opacity, scale, blur, yOff, rotX;
             if (local <= 0) {
-              opacity = 0; scale = 0.6; blur = 24; yOff = 30;
-            } else if (local < 0.32) {
-              const k = local / 0.32;
+              opacity = 0; scale = 0.72; blur = 18; yOff = 26; rotX = 18;
+            } else if (local < 0.3) {
+              const k = local / 0.3;
               const ease = 1 - Math.pow(1 - k, 3);
-              opacity = ease; scale = 0.6 + ease * 0.4; blur = 24 * (1 - ease); yOff = 30 * (1 - ease);
-            } else if (local < 0.68) {
-              opacity = 1; scale = 1; blur = 0; yOff = 0;
-            } else if (local < 1) {
-              const k = (local - 0.68) / 0.32;
+              opacity = ease; scale = 0.72 + ease * 0.28; blur = 18 * (1 - ease); yOff = 26 * (1 - ease); rotX = 18 * (1 - ease);
+            } else if (local < 0.72) {
+              opacity = 1; scale = 1; blur = 0; yOff = 0; rotX = 0;
+            } else if (local <= 1) {
+              const k = (local - 0.72) / 0.28;
               const ease = k * k;
-              opacity = 1 - ease; scale = 1 + ease * 0.35; blur = 24 * ease; yOff = -22 * ease;
+              const fade = isLast ? ease * 0.62 : ease;
+              opacity = Math.max(isLast ? 0.22 : 0, 1 - fade);
+              scale = 1 + ease * (isLast ? 0.18 : 0.28);
+              blur = (isLast ? 10 : 22) * ease;
+              yOff = isLast ? -10 * ease : -20 * ease;
+              rotX = isLast ? -8 * ease : -14 * ease;
             } else {
-              opacity = 0; scale = 1.35; blur = 24; yOff = -22;
+              opacity = 0; scale = isLast ? 1.12 : 1.32; blur = 22; yOff = isLast ? -10 : -20; rotX = isLast ? -8 : -14;
             }
 
             return (
@@ -408,16 +417,17 @@ const HomeParallax = () => {
                 style={{
                   position: 'absolute',
                   left: '50%', top: '50%',
-                  transform: `translate(-50%, calc(-50% + ${yOff}px)) scale(${scale})`,
+                  transform: `translate(-50%, calc(-50% + ${yOff}px)) perspective(900px) rotateX(${rotX}deg) scale(${scale})`,
                   opacity,
-                  filter: blur > 0.2 ? `blur(${blur}px)` : 'none',
+                  filter: blur > 0.35 ? `blur(${blur}px)` : 'none',
                   color: /[.,!?]/.test(word) ? 'var(--bl-yellow)' : '#fff',
                   fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
                   fontSize: 'clamp(64px, 11vw, 180px)',
                   letterSpacing: '-0.02em', lineHeight: 1,
-                  textShadow: '0 0 60px rgba(253,213,53,0.18)',
+                  textShadow: '0 0 60px rgba(253,213,53,0.2), 0 22px 48px rgba(0,0,0,0.45)',
                   whiteSpace: 'nowrap',
                   willChange: 'transform, opacity, filter',
+                  backfaceVisibility: 'hidden',
                 }}
               >{word}</span>
             );
