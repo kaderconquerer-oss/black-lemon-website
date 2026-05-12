@@ -3,131 +3,62 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Black Lemon — Brand & Website</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>Black Lemon — Event Studio · Dubai</title>
+  <link rel="stylesheet" href="../styles.css" />
+  <link rel="stylesheet" href="site.css" />
   <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-  <style>
-    body { margin: 0; background: #f0eee9; font-family: 'Manrope', system-ui, sans-serif; }
-  </style>
 </head>
 <body>
   <div id="root"></div>
 
-  <script type="text/babel" src="design-canvas.jsx"></script>
-  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="components/tweaks-panel.jsx"></script>
   <script type="text/babel" src="components/primitives.jsx"></script>
-  <script type="text/babel" src="components/brand-guidelines.jsx"></script>
-  <script type="text/babel" src="components/site-a.jsx"></script>
-  <script type="text/babel" src="components/site-b.jsx"></script>
-  <script type="text/babel" src="components/site-c.jsx"></script>
+  <script type="text/babel" src="components/chrome.jsx"></script>
+  <script type="text/babel" src="components/data.jsx"></script>
+  <script type="text/babel" src="pages/home.jsx"></script>
 
   <script type="text/babel">
     const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-      "yellow": "#fdd535",
-      "theme": "dark",
-      "heroVariant": "kinetic"
+      "logoTone": "black"
     }/*EDITMODE-END*/;
 
-    function App() {
-      const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+    function Site() {
+      useSmoothScroll();
+      const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
 
-      // Apply yellow CSS variable globally
-      React.useEffect(() => {
-        document.documentElement.style.setProperty('--bl-yellow', tweaks.yellow);
-      }, [tweaks.yellow]);
-
+      // Logo tone options:
+      //   "black"  → wordmark-black.png  (white text on black — best on dark bg)
+      //   "white"  → wordmark-white.png  (black text on white)
+      //   "yellow" → wordmark-yellow.png (yellow accent text)
       return (
         <>
-          <DesignCanvas>
+          <CursorBar />
+          <ScrollProgress />
+          <SiteHeader logoTone={t.logoTone} />
+          <main><HomePage /></main>
+          <WhatsAppFab />
+          <SiteFooter logoTone={t.logoTone} />
 
-            {/* ───── BRAND GUIDELINES ───── */}
-            <DCSection id="brand" title="Brand Guidelines" subtitle="Logo, color, type, voice, icons, applications">
-              <DCArtboard id="logo" label="01 · Logo System" width={1100} height={1280}>
-                <div className="bl-noscroll" style={{ height: '100%' }}>
-                  <LogoSystem />
-                </div>
-              </DCArtboard>
-              <DCArtboard id="color" label="02 · Color" width={1100} height={1280}>
-                <div className="bl-noscroll" style={{ height: '100%' }}>
-                  <ColorSystem />
-                </div>
-              </DCArtboard>
-              <DCArtboard id="type" label="03 · Typography" width={1100} height={1280}>
-                <div className="bl-noscroll" style={{ height: '100%' }}>
-                  <TypeSystem />
-                </div>
-              </DCArtboard>
-              <DCArtboard id="voice" label="04 · Voice" width={1100} height={1100}>
-                <div className="bl-noscroll" style={{ height: '100%' }}>
-                  <VoiceSystem />
-                </div>
-              </DCArtboard>
-              <DCArtboard id="icons" label="05 · Icon Set" width={1100} height={1100}>
-                <div className="bl-noscroll" style={{ height: '100%' }}>
-                  <IconSet />
-                </div>
-              </DCArtboard>
-              <DCArtboard id="applications" label="06 · Applications" width={1100} height={1700}>
-                <div className="bl-noscroll" style={{ height: '100%' }}>
-                  <Applications />
-                </div>
-              </DCArtboard>
-            </DCSection>
-
-            {/* ───── WEBSITE DIRECTIONS ───── */}
-            <DCSection id="websites" title="Website — Three Directions" subtitle="Three distinct aesthetic approaches. All share the bar.">
-              <DCArtboard id="site-a" label="A · Editorial Dark" width={1440} height={3600}>
-                <SiteA tweaks={tweaks} />
-              </DCArtboard>
-              <DCArtboard id="site-b" label="B · Kinetic Yellow" width={1440} height={3400}>
-                <SiteB tweaks={tweaks} />
-              </DCArtboard>
-              <DCArtboard id="site-c" label="C · Architectural Light" width={1440} height={3400}>
-                <SiteC tweaks={tweaks} />
-              </DCArtboard>
-            </DCSection>
-
-          </DesignCanvas>
-
-          {/* TWEAKS PANEL */}
           <TweaksPanel title="Tweaks">
-            <TweakSection title="Color">
-              <TweakColor label="Primary yellow" value={tweaks.yellow} onChange={v => setTweak('yellow', v)} />
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, marginTop: 8 }}>
-                {['#fdd535','#FFD60A','#F5C518','#F2C94C'].map(c => (
-                  <button key={c} onClick={() => setTweak('yellow', c)}
-                    style={{ height: 28, background: c, border: tweaks.yellow === c ? '2px solid #0a0a0a' : '1px solid rgba(0,0,0,0.15)', cursor: 'pointer' }} />
-                ))}
-              </div>
-            </TweakSection>
-            <TweakSection title="Theme">
-              <TweakRadio value={tweaks.theme} onChange={v => setTweak('theme', v)}
-                options={[{value:'dark',label:'Dark'},{value:'light',label:'Light'}]} />
-              <div style={{ fontSize: 11, opacity: 0.55, marginTop: 8, lineHeight: 1.4 }}>
-                Affects the canvas backdrop. Each website artboard has its own committed theme — open one fullscreen to see it shine.
-              </div>
-            </TweakSection>
-            <TweakSection title="Hero variant">
-              <TweakRadio value={tweaks.heroVariant} onChange={v => setTweak('heroVariant', v)}
-                options={[{value:'kinetic',label:'Kinetic'},{value:'image',label:'Image'},{value:'minimal',label:'Minimal'}]} />
-              <div style={{ fontSize: 11, opacity: 0.55, marginTop: 8, lineHeight: 1.4 }}>
-                Direction A respects this setting. Try toggling, then expand the Editorial Dark artboard.
-              </div>
+            <TweakSection label="Identity">
+              <TweakRadio
+                label="Logo lockup"
+                value={t.logoTone}
+                options={[
+                  { label: 'White text', value: 'black' },
+                  { label: 'Black text', value: 'white' },
+                  { label: 'Yellow', value: 'yellow' },
+                ]}
+                onChange={(v) => setTweak('logoTone', v)}
+              />
             </TweakSection>
           </TweaksPanel>
         </>
       );
     }
-
-    // Apply theme-driven canvas backdrop
-    function applyTheme(theme) {
-      document.body.style.background = theme === 'light' ? '#f0eee9' : '#0a0a0a';
-    }
-    // Watch tweaks (poll a CSS var change is overkill — observe via App effect below)
-
-    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    ReactDOM.createRoot(document.getElementById('root')).render(<Site />);
   </script>
 </body>
 </html>
