@@ -11,7 +11,7 @@ const Wordmark = ({ size = 240, variant = 'white', tagline = true, style = {} })
   const tone = variant === 'black' ? 'yellow'   // logo on yellow
              : variant === 'dark'  ? 'white'    // logo on white/cream
              :                       'black';   // logo on black
-  const src = `assets/${base}-${tone}.png`;
+  const src = window.__resources[`${base}-${tone}`] || `assets/${base}-${tone}.png`;
   // Aspect: wordmark 1344/674 ≈ 1.994; full 1344/886 ≈ 1.517
   const aspect = tagline ? (1344/886) : (1344/674);
   return (
@@ -34,7 +34,7 @@ const Monogram = ({ size = 40, variant = 'white', style = {} }) => {
   const tone = variant === 'black' ? 'yellow'
              : variant === 'dark'  ? 'white'
              :                       'black';
-  const src = `assets/wordmark-${tone}.png`;
+  const src = window.__resources[`wordmark-${tone}`] || `assets/wordmark-${tone}.png`;
   const cropX = 0.04, cropY = 0.04;   // tiny inset to skip the safe-area pad
   const cropW = 0.20, cropH = 0.42;   // size of the "B|" region
   return (

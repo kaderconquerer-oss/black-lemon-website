@@ -42,9 +42,9 @@ const ServicesPage = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 40 }}>
           {[
             { n: '01', t: 'Listen', d: 'Two hours with the person who actually has to live with the result. No deck.' },
-            { n: '02', t: 'Frame', d: 'A single page. The idea, the audience, the one thing the room should do.' },
+            { n: '02', t: 'Frame', d: 'A single page. The idea, the audience, the one thing the event should do.' },
             { n: '03', t: 'Build', d: 'Vendors, freight, permits, build, light, test, tune, breathe.' },
-            { n: '04', t: 'Run', d: 'Show day. We disappear into the corners and let the room speak.' },
+            { n: '04', t: 'Run', d: 'Show day. We disappear into the corners and let the event speak.' },
           ].map((p, i) => (
             <Reveal key={p.n} delay={i * 100}>
               <div style={{ borderTop: '2px solid #0a0a0a', paddingTop: 24 }}>

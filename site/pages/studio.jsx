@@ -26,7 +26,7 @@ const StudioPage = () => {
         </Reveal>
         <Reveal delay={200}>
           <p style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: 28, lineHeight: 1.45, marginBottom: 32, letterSpacing: '-0.01em' }}>
-            Black Lemon was started in 2019 because the founders kept being asked to make the same kind of room: <em>"big, with branding everywhere"</em>. We thought there might be a different version of that brief.
+            Black Lemon was started in 2019 because the founders kept being asked to make the same kind of event: <em>"big, with branding everywhere"</em>. We thought there might be a different version of that brief.
           </p>
           <p style={{ fontFamily: 'var(--font-serif)', fontWeight: 300, fontSize: 22, lineHeight: 1.55, opacity: 0.8 }}>
             Six years later, we still take fewer than fifteen projects a year. We think of ourselves less like an agency and more like a small editorial team \u2014 one with a workshop, a fabricator on speed-dial, and a strong opinion about typography.

@@ -14,7 +14,7 @@ const ContactPage = () => {
       <section style={{ padding: '180px 64px 64px', background: '#0a0a0a', color: '#fff' }}>
         <Reveal>
           <div className="bl-eyebrow" style={{ marginBottom: 48 }}>Index 06 / Contact</div>
-          <h1 className="bl-h1">Tell us about<br/><span className="bl-italic" style={{ fontWeight: 300 }}>the room.</span></h1>
+          <h1 className="bl-h1">Tell us about<br/><span className="bl-italic" style={{ fontWeight: 300 }}>the event.</span></h1>
           <p style={{ marginTop: 40, fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 26, lineHeight: 1.4, maxWidth: 880, opacity: 0.85 }}>
             Six fields, four minutes. We reply to every brief within two working days \u2014 even the ones we can't take on.
           </p>
@@ -80,7 +80,7 @@ const ContactPage = () => {
               </div>
 
               <div>
-                <label className="bl-label">07 / What's the room?</label>
+                <label className="bl-label">07 / What's the event?</label>
                 <textarea className="bl-input" rows={4} placeholder="Tell us anything. The audience, the goal, the constraint, the thing that's bugging you about the brief\u2026" value={form.message} onChange={set('message')} style={{ resize: 'vertical', fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300 }} />
               </div>
 

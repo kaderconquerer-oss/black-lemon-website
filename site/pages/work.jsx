@@ -10,7 +10,7 @@ const WorkPage = () => {
     <>
       <PageHeader
         eyebrow="Index 02 / Work"
-        title={<>Eight rooms,<br/><span className="bl-italic" style={{ fontWeight: 300 }}>recently.</span></>}
+        title={<>Eight events,<br/><span className="bl-italic" style={{ fontWeight: 300 }}>recently.</span></>}
         dek="A short, slow-moving list. We update it twice a year."
       />
 
@@ -32,7 +32,7 @@ const WorkPage = () => {
       <section style={{ padding: '0 64px', position: 'relative' }}>
         {list.map((cs, i) => (
           <Reveal key={cs.slug} delay={i * 40}>
-            <a href={`#/work/${cs.slug}`}
+            <a href={`#/work/${cs.slug}`} className="bl-row"
                onMouseEnter={() => setHoverIdx(i)} onMouseLeave={() => setHoverIdx(null)}
                style={{ display: 'grid', gridTemplateColumns: '100px 1.5fr 1.5fr 1fr 0.6fr 60px', gap: 32, padding: '48px 0', borderBottom: '1px solid rgba(255,255,255,0.12)', alignItems: 'center', cursor: 'pointer' }}>
               <div style={{ fontFamily: 'var(--font-mono)', fontSize: 14, opacity: 0.5 }}>{String(i+1).padStart(2,'0')}</div>
@@ -49,7 +49,7 @@ const WorkPage = () => {
         ))}
 
         {/* Hover preview */}
-        <div style={{ position: 'fixed', right: 64, bottom: 64, width: 360, height: 240, pointerEvents: 'none', zIndex: 50, opacity: hoverIdx !== null ? 1 : 0, transform: hoverIdx !== null ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.95)', transition: 'all 0.4s cubic-bezier(.2,.7,.3,1)' }}>
+        <div className="bl-hover-preview" style={{ position: 'fixed', right: 64, bottom: 64, width: 360, height: 240, pointerEvents: 'none', zIndex: 50, opacity: hoverIdx !== null ? 1 : 0, transform: hoverIdx !== null ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.95)', transition: 'all 0.4s cubic-bezier(.2,.7,.3,1)' }}>
           {hoverIdx !== null && (
             <div style={{ position: 'relative', width: '100%', height: '100%', border: '1px solid var(--bl-yellow)' }}>
               <Placeholder label={`${list[hoverIdx].client} \u00b7 ${list[hoverIdx].location}`} style={{ width: '100%', height: '100%' }} tone={list[hoverIdx].tone === 'light' ? 'light' : 'dark'} />

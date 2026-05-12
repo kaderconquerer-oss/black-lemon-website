@@ -47,7 +47,7 @@ const CaseStudyPage = ({ slug }) => {
       <section style={{ padding: '120px 64px', display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 96, borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         <Reveal>
           <div className="bl-eyebrow" style={{ marginBottom: 32 }}>The brief</div>
-          <h3 className="bl-h3">A room that sounded like the company \u2014 not the venue.</h3>
+          <h3 className="bl-h3">An event that sounded like the company — not the venue.</h3>
         </Reveal>
         <Reveal delay={200}>
           <p style={{ fontSize: 19, lineHeight: 1.6, opacity: 0.8, marginTop: 0, marginBottom: 32, fontFamily: 'var(--font-serif)', fontWeight: 300 }}>
