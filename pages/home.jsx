@@ -52,17 +52,12 @@ const HomeHero = () => {
 
       <div className="bl-hero-scroll">
         <Reveal delay={450}>
-          <a href="#about" className="bl-scroll-cue" aria-label="Scroll to explore">
-            <span className="bl-scroll-cue__label" aria-hidden="true">
-              {'Scroll to explore'.split('').map((ch, idx) => (
-                <span key={idx} className="bl-scroll-cue__char" style={{ animationDelay: `${idx * 0.055}s` }}>{ch === ' ' ? '\u00A0' : ch}</span>
-              ))}
+          <a href="#about" className="bl-scroll-cue bl-scroll-cue--rail" aria-label="Scroll to explore the studio">
+            <span className="bl-scroll-cue__hint">Scroll</span>
+            <span className="bl-scroll-cue__rail" aria-hidden="true">
+              <span className="bl-scroll-cue__rail-fill" />
+              <span className="bl-scroll-cue__glow-dot" />
             </span>
-            <span className="bl-scroll-cue__track" aria-hidden="true">
-              <span className="bl-scroll-cue__dot" />
-              <span className="bl-scroll-cue__dot bl-scroll-cue__dot--b" />
-            </span>
-            <span className="bl-scroll-cue__arrow" aria-hidden="true">↓</span>
           </a>
         </Reveal>
       </div>
@@ -291,181 +286,26 @@ const HomeStats = () => (
   </section>
 );
 
-// Simpler studio-note tunnel: each word fades-and-scales through its own
-// scroll slice. Section is sized so scroll is locked until every word has
-// played — only then can you scroll past.
-const HomeParallax = () => {
-  const sectionRef = React.useRef(null);
-  const [t, setT] = React.useState(0); // 0..1 progress across the pinned section
-
-  const TOKENS = [
-    'We', 'light', 'the', 'room,',
-    'so', 'the', 'people', 'light', 'up.'
-  ];
-
-  React.useEffect(() => {
-    const el = sectionRef.current; if (!el) return;
-    let raf = 0;
-    const onScroll = () => {
-      if (raf) cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const r = el.getBoundingClientRect();
-        const total = Math.max(1, r.height - window.innerHeight);
-        const p = Math.min(1, Math.max(0, -r.top / total));
-        setT(p);
-      });
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll);
-    return () => { window.removeEventListener('scroll', onScroll); window.removeEventListener('resize', onScroll); cancelAnimationFrame(raf); };
-  }, []);
-
-  // Scroll distance: enough runway per token; must match CSS (no fixed-height overrides).
-  const unitVh = 78;
-  const outroVh = 36;
-  const sectionHeight = `${TOKENS.length * unitVh + outroVh}vh`;
-  const tail = 0.12;
-
-  return (
-    <section
-      ref={sectionRef}
-      className="bl-tunnel"
-      style={{
-        position: 'relative',
-        height: sectionHeight,
-        background: '#050505',
-        borderTop: '1px solid rgba(255,255,255,0.08)',
-        borderBottom: '1px solid rgba(255,255,255,0.08)',
-      }}
-    >
-      <div className="bl-tunnel-sticky" style={{ position: 'sticky', top: 0, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {/* Backdrop vignette */}
-        <div aria-hidden style={{ position: 'absolute', inset: 0,
-          background:
-            'radial-gradient(ellipse at center, rgba(253,213,53,0.08) 0%, rgba(10,10,10,0) 55%), ' +
-            'radial-gradient(ellipse at center, #0a0a0a 0%, #050505 70%, #000 100%)',
-        }} />
-
-        {/* Eyebrow */}
-        <div style={{
-          position: 'absolute', top: '8vh', left: 0, right: 0,
-          display: 'flex', justifyContent: 'center',
-          opacity: Math.max(0, 1 - t * 5),
-          transition: 'opacity 0.2s linear',
-        }}>
-          <div className="bl-eyebrow" style={{ color: 'var(--bl-yellow)' }}>Studio note</div>
-        </div>
-
-        {/* Word-progress dots — right edge */}
-        <div style={{
-          position: 'absolute', top: '50%', right: '4vw',
-          transform: 'translateY(-50%)',
-          display: 'flex', flexDirection: 'column', gap: 10,
-        }}>
-          {TOKENS.map((_, i) => {
-            const N = TOKENS.length;
-            const wp = Math.max(0, Math.min(1, (t - i / N) * N));
-            return (
-              <span key={i} style={{
-                width: 6, height: 6, borderRadius: '50%',
-                background: wp >= 1 ? 'var(--bl-yellow)' : (wp > 0 ? 'rgba(253,213,53,0.5)' : 'rgba(255,255,255,0.15)'),
-                transition: 'background 0.25s ease',
-              }} />
-            );
-          })}
-        </div>
-
-        {/* One word at a time — 3D depth + fade (scroll-synced) */}
-        <div
-          className="bl-tunnel-stage"
-          style={{ position: 'relative', width: 'min(1200px, 92vw)', height: 'min(420px, 60vh)', perspective: 1100, transformStyle: 'preserve-3d' }}
-        >
-          {TOKENS.map((word, i) => {
-            const N = TOKENS.length;
-            const start = i / N;
-            const end = (i + 1) / N;
-            const local = (t - start) / (end - start); // [0..1] is this word's window
-            const isLast = i === N - 1;
-
-            let opacity, scale, blur, yOff, rotX;
-            if (local <= 0) {
-              opacity = 0; scale = 0.72; blur = 18; yOff = 26; rotX = 18;
-            } else if (local < 0.3) {
-              const k = local / 0.3;
-              const ease = 1 - Math.pow(1 - k, 3);
-              opacity = ease; scale = 0.72 + ease * 0.28; blur = 18 * (1 - ease); yOff = 26 * (1 - ease); rotX = 18 * (1 - ease);
-            } else if (local < 0.72) {
-              opacity = 1; scale = 1; blur = 0; yOff = 0; rotX = 0;
-            } else if (local <= 1) {
-              const k = (local - 0.72) / 0.28;
-              const ease = k * k;
-              const fade = isLast ? ease * 0.62 : ease;
-              opacity = Math.max(isLast ? 0.22 : 0, 1 - fade);
-              scale = 1 + ease * (isLast ? 0.18 : 0.28);
-              blur = (isLast ? 10 : 22) * ease;
-              yOff = isLast ? -10 * ease : -20 * ease;
-              rotX = isLast ? -8 * ease : -14 * ease;
-            } else {
-              opacity = 0; scale = isLast ? 1.12 : 1.32; blur = 22; yOff = isLast ? -10 : -20; rotX = isLast ? -8 : -14;
-            }
-
-            return (
-              <span
-                key={i}
-                className="bl-tunnel-word"
-                style={{
-                  position: 'absolute',
-                  left: '50%', top: '50%',
-                  transform: `translate(-50%, calc(-50% + ${yOff}px)) perspective(900px) rotateX(${rotX}deg) scale(${scale})`,
-                  opacity,
-                  filter: blur > 0.35 ? `blur(${blur}px)` : 'none',
-                  color: /[.,!?]/.test(word) ? 'var(--bl-yellow)' : '#fff',
-                  fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300,
-                  fontSize: 'clamp(64px, 11vw, 180px)',
-                  letterSpacing: '-0.02em', lineHeight: 1,
-                  textShadow: '0 0 60px rgba(253,213,53,0.2), 0 22px 48px rgba(0,0,0,0.45)',
-                  whiteSpace: 'nowrap',
-                  willChange: 'transform, opacity, filter',
-                  backfaceVisibility: 'hidden',
-                }}
-              >{word}</span>
-            );
-          })}
-        </div>
-
-        {/* Attribution — only at the very end */}
-        <div style={{
-          position: 'absolute', left: 0, right: 0, bottom: '12vh',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16,
-          opacity: Math.max(0, Math.min(1, (t - (1 - tail)) / (tail * 0.6))),
-          transition: 'opacity 0.2s linear',
-        }}>
-          <span style={{ width: 48, height: 2, background: 'var(--bl-yellow)' }} />
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.25em', textTransform: 'uppercase', opacity: 0.85, color: '#fff' }}>
-            Hassan El Beyrouthy · Founder
-          </span>
-          <span style={{ width: 48, height: 2, background: 'var(--bl-yellow)' }} />
-        </div>
-
-        {/* Keep scrolling hint */}
-        <div style={{
-          position: 'absolute', bottom: 28, left: 0, right: 0,
-          textAlign: 'center', opacity: Math.max(0, 1 - t * 6),
-          fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.3em',
-          textTransform: 'uppercase', color: 'rgba(255,255,255,0.55)',
-        }}>
-          Keep scrolling
-        </div>
-
-        {/* progress rail */}
-        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 3, background: 'rgba(253,213,53,0.12)', zIndex: 3 }}>
-          <div style={{ height: '100%', background: 'var(--bl-yellow)', transformOrigin: '0 50%', transform: `scaleX(${t})`, willChange: 'transform' }} />
-        </div>
-      </div>
-    </section>
-  );
-};
+// Studio note — single line, no scroll-jacking
+const HomeParallax = () => (
+  <section
+    id="studio-note"
+    className="bl-studio-note"
+    style={{
+      background: '#050505',
+      borderTop: '1px solid rgba(255,255,255,0.08)',
+      borderBottom: '1px solid rgba(255,255,255,0.08)',
+    }}
+  >
+    <div className="bl-studio-note__inner">
+      <div className="bl-eyebrow bl-studio-note__eyebrow">Studio note</div>
+      <p className="bl-studio-note__quote">
+        We light the room, <span className="bl-studio-note__accent">so the people light up.</span>
+      </p>
+      <p className="bl-studio-note__attr">Hassan El Beyrouthy · Founder</p>
+    </div>
+  </section>
+);
 
 const HomeServices = () => (
   <section id="services" style={{ background: '#f5f1ea', color: '#0a0a0a', padding: '120px 64px', borderTop: '1px solid rgba(0,0,0,0.08)' }}>
@@ -520,12 +360,13 @@ const HomeWork = () => {
 
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.12)' }}>
         {featured.map((cs, i) => (
-          <div
+          <a
             key={cs.slug}
+            href={`#/work/${cs.slug}`}
             className={`bl-row bl-work-row${hover?.i === i ? ' is-hover' : ''}`}
             onMouseMove={(e) => onMove(e, i)}
             onMouseLeave={() => setHover(h => (h && h.i === i ? null : h))}
-            style={{ display: 'grid', gridTemplateColumns: '80px 1.6fr 1.5fr 1fr', gap: 32, padding: '40px 0', borderBottom: '1px solid rgba(255,255,255,0.12)', alignItems: 'center', position: 'relative', cursor: 'pointer' }}>
+            style={{ display: 'grid', gridTemplateColumns: '80px 1.6fr 1.5fr 1fr', gap: 32, padding: '40px 0', borderBottom: '1px solid rgba(255,255,255,0.12)', alignItems: 'center', position: 'relative', cursor: 'pointer', color: 'inherit', textDecoration: 'none' }}>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 14, opacity: 0.5 }}>{String(i+1).padStart(2,'0')}</div>
             <div>
               <div className="bl-eyebrow" style={{ marginBottom: 8 }}>{cs.client}</div>
@@ -533,7 +374,7 @@ const HomeWork = () => {
             </div>
             <div style={{ fontSize: 14, opacity: 0.6, fontFamily: 'var(--font-mono)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{cs.tag}</div>
             <div style={{ fontFamily: 'var(--font-mono)', fontSize: 14, opacity: 0.5, textAlign: 'right' }}>{cs.year}</div>
-          </div>
+          </a>
         ))}
       </div>
 
@@ -763,21 +604,30 @@ const HomeContact = () => {
 
         <aside className="bl-contact-aside">
           <div className="bl-contact-card">
-            <div className="bl-eyebrow" style={{ marginBottom: 28 }}>Or, more directly</div>
-            <a href="https://wa.me/971500000000" className="bl-contact-line bl-contact-line--link">
-              <span className="bl-contact-row"><span className="bl-contact-row__k">WhatsApp:</span><span className="bl-contact-row__v">+971 50 000 0000</span></span>
-              <span className="bl-contact-row__meta">Mon–Fri, 09:00–18:00 GST</span>
+            <div className="bl-eyebrow" style={{ marginBottom: 24 }}>Or, more directly</div>
+            <a href="https://wa.me/971500000000" className="bl-contact-direct bl-contact-direct--link">
+              <span className="bl-contact-kv">
+                <span className="bl-contact-kv__k">WhatsApp</span>
+                <span className="bl-contact-kv__v">+971 50 000 0000</span>
+              </span>
+              <span className="bl-contact-kv__meta">Mon–Fri, 09:00–18:00 GST</span>
             </a>
-            <a href="tel:+97144000000" className="bl-contact-line bl-contact-line--link">
-              <span className="bl-contact-row"><span className="bl-contact-row__k">Phone:</span><span className="bl-contact-row__v">+971 4 400 0000</span></span>
+            <a href="tel:+97144000000" className="bl-contact-direct bl-contact-direct--link">
+              <span className="bl-contact-kv">
+                <span className="bl-contact-kv__k">Phone</span>
+                <span className="bl-contact-kv__v">+971 4 400 0000</span>
+              </span>
             </a>
-            <a href="mailto:studio@blacklemon.ae" className="bl-contact-line bl-contact-line--link">
-              <span className="bl-contact-row"><span className="bl-contact-row__k">Email:</span><span className="bl-contact-row__v">studio@blacklemon.ae</span></span>
+            <a href="mailto:studio@blacklemon.ae" className="bl-contact-direct bl-contact-direct--link">
+              <span className="bl-contact-kv">
+                <span className="bl-contact-kv__k">Email</span>
+                <span className="bl-contact-kv__v">studio@blacklemon.ae</span>
+              </span>
             </a>
           </div>
 
           <div className="bl-contact-card bl-contact-card--secondary">
-            <div className="bl-eyebrow" style={{ marginBottom: 16 }}>Studio address</div>
+            <div className="bl-eyebrow" style={{ marginBottom: 14 }}>Studio address</div>
             <p className="bl-contact-address">
               Warehouse 4<br/>Alserkal Avenue<br/>Al Quoz 1<br/>Dubai, UAE
             </p>
