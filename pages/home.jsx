@@ -55,19 +55,18 @@ const HomeHero = () => {
               An event studio in Dubai working at the intersection of editorial design and live production. Galas, launches, conferences, dinners — built by six people, on purpose.
             </p>
           </Reveal>
+          <div className="bl-hero-scroll">
+            <Reveal delay={450}>
+              <a href="#about" className="bl-scroll-cue bl-scroll-cue--rail" aria-label="Scroll to explore the studio">
+                <span className="bl-scroll-cue__hint">Scroll</span>
+                <span className="bl-scroll-cue__rail" aria-hidden="true">
+                  <span className="bl-scroll-cue__rail-fill" />
+                  <span className="bl-scroll-cue__glow-dot" />
+                </span>
+              </a>
+            </Reveal>
+          </div>
         </div>
-      </div>
-
-      <div className="bl-hero-scroll">
-        <Reveal delay={450}>
-          <a href="#about" className="bl-scroll-cue bl-scroll-cue--rail" aria-label="Scroll to explore the studio">
-            <span className="bl-scroll-cue__hint">Scroll</span>
-            <span className="bl-scroll-cue__rail" aria-hidden="true">
-              <span className="bl-scroll-cue__rail-fill" />
-              <span className="bl-scroll-cue__glow-dot" />
-            </span>
-          </a>
-        </Reveal>
       </div>
     </section>
   );
@@ -320,22 +319,22 @@ const HomeServices = () => (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 96, marginBottom: 80 }}>
       <Reveal>
         <div className="bl-eyebrow" style={{ marginBottom: 32 }}>What we do</div>
-        <h2 className="bl-h2">Six things.<br/>Done with care.</h2>
+        <h2 className="bl-h2">Full-service.<br/>Done with care.</h2>
       </Reveal>
       <Reveal delay={200}>
         <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 22, lineHeight: 1.5, opacity: 0.75, marginTop: 24 }}>
-          We don't do venue scouting, we don't do brand activations, and we don't do "vibes". The list is short on purpose.
+          From concept to cleanup — fourteen disciplines under one roof. Every event gets the same team, the same standards, the same attention.
         </p>
       </Reveal>
     </div>
     <div style={{ borderTop: '1px solid rgba(0,0,0,0.15)' }}>
       {SERVICES.map((s, i) => (
-        <Reveal key={s.num} delay={i * 60}>
-          <div className="bl-row" style={{ display: 'grid', gridTemplateColumns: '80px 1.4fr 2fr 60px', gap: 32, padding: '36px 0', borderBottom: '1px solid rgba(0,0,0,0.15)', alignItems: 'baseline' }}>
-            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 14, opacity: 0.5 }}>{s.num}</div>
-            <div className="bl-h3">{s.name}</div>
-            <div style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.7, fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300 }}>{s.desc}</div>
-            <div style={{ textAlign: 'right' }}><BLIcon name="arrow" size={20} color="#0a0a0a" accent="var(--bl-yellow)" /></div>
+        <Reveal key={s.num} delay={i * 40}>
+          <div className="bl-row" style={{ display: 'grid', gridTemplateColumns: '60px 1.2fr 2.2fr 60px', gap: 24, padding: '28px 0', borderBottom: '1px solid rgba(0,0,0,0.15)', alignItems: 'baseline' }}>
+            <div style={{ fontFamily: 'var(--font-mono)', fontSize: 13, opacity: 0.4 }}>{s.num}</div>
+            <div className="bl-h3" style={{ fontSize: 'clamp(18px, 2vw, 26px)' }}>{s.name}</div>
+            <div style={{ fontSize: 15, lineHeight: 1.55, opacity: 0.65, fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300 }}>{s.desc}</div>
+            <div style={{ textAlign: 'right' }}><BLIcon name="arrow" size={18} color="#0a0a0a" accent="var(--bl-yellow)" /></div>
           </div>
         </Reveal>
       ))}

@@ -21,12 +21,20 @@ const CASE_STUDIES = [
 ];
 
 const SERVICES = [
-  { num: '01', name: 'Creative Direction', desc: 'We start with the idea, not the venue. A point of view, a single image, the one thing the audience should walk out remembering.', deliverables: ['Concept territories', 'Mood + reference', 'Naming', 'Editorial line'] },
-  { num: '02', name: 'Production', desc: 'Permits, vendors, freight, build, strike. The unglamorous middle that makes everything else possible.', deliverables: ['Vendor sourcing', 'Budgets + tracking', 'Permits + safety', 'On-site management'] },
-  { num: '03', name: 'Stage & Set Design', desc: 'Architecture for a single night. We design event spaces the way set designers do — for sightlines, for cameras, for the way bodies move through them.', deliverables: ['Concept renders', 'Construction docs', 'Lighting plot', 'Build oversight'] },
-  { num: '04', name: 'Run-of-show', desc: 'The minute-by-minute. Cues, calls, handoffs. Quietly the most important thing we do.', deliverables: ['Cue sheets', 'Stage management', 'Talent logistics', 'Tech rehearsal'] },
-  { num: '05', name: 'F&B Direction', desc: 'Menus designed alongside the event, not after it. Plate, glass, paper goods — part of the brand, not a footnote.', deliverables: ['Menu development', 'Service design', 'Tableware', 'Beverage program'] },
-  { num: '06', name: 'Brand & Identity', desc: 'For events that deserve their own logo, name, and editorial system. Done right, the brand outlives the night.', deliverables: ['Naming', 'Identity', 'Editorial guidelines', 'Web + invites'] },
+  { num: '01', name: 'Advertising & Marketing Solutions', desc: 'Outdoor advertising in premium locations, social media campaigns, sports advertising, branding & visual identity.' },
+  { num: '02', name: 'PR, Media & Influencer Network', desc: 'Public relations, influencer marketing, talent & celebrity engagement, MCs, speakers & hosts, press & media relations.' },
+  { num: '03', name: 'Media Coverage & Content Production', desc: 'Full event media coverage, photo & video shooting, live stream production & control, drone coverage.' },
+  { num: '04', name: 'Design & Creative Direction', desc: 'Visual identity, event design, marketing & advertising design, corporate presentations, brand identity, social media & video design.' },
+  { num: '05', name: 'Mockups & Build Execution', desc: 'Amenities, hologram, masterplan & layout, location & surroundings, exterior buildings & interior.' },
+  { num: '06', name: 'AV Production & Technical Solutions', desc: 'LED screens & visual display, sound systems & audio engineering, lighting systems, live production & control.' },
+  { num: '07', name: 'Production & On-Ground Execution', desc: 'Stage & structural setup, logistics & equipment handling, on-site team & crew management, branding & venue setup.' },
+  { num: '08', name: 'Exhibitions & Showcase Platforms', desc: 'End-to-end exhibition solutions, booth management, exhibition booth design & setup, pre & post exhibition marketing.' },
+  { num: '09', name: 'Catering & Hospitality Services', desc: 'Catering solutions, service staff & hospitality, custom catering, live cooking stations, branded beverage booths.' },
+  { num: '10', name: 'Giveaways & Branded Gifts', desc: 'Customized branded giveaways, gift booths & activation stations, premium gift packaging, concept & gift strategy.' },
+  { num: '11', name: 'Booth, Stands & Location Solutions', desc: 'Location sourcing, mall & activation stands, outdoor & roadshow promotional booths, stand design & branding.' },
+  { num: '12', name: 'Regional & International Roadshows', desc: 'UAE, GCC & regional roadshows, Egypt, Africa & Europe, full roadshow management, audience targeting, integrated marketing.' },
+  { num: '13', name: 'Entertainment & Live Experiences', desc: 'Live performances, themed & cultural entertainment, interactive entertainment, special effects & show elements.' },
+  { num: '14', name: 'Venue Sourcing & Reservations', desc: 'Indoor & outdoor venues, reservation & coordination, outdoor tents & seasonal event structures, venue selection strategy.' },
 ];
 
 const JOURNAL = [
