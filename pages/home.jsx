@@ -418,7 +418,6 @@ const HomeManifesto = () => (
 // the cell under the cursor lifts forward with a yellow underline.
 const HomeClients = () => {
   const ref = React.useRef(null);
-  const dbgHoverLogRef = React.useRef(null);
   const rafRef = React.useRef(0);
   const targetRef = React.useRef({ x: 0.5, y: 0.5, active: false, hoverIdx: -1 });
   const [m, setM] = React.useState({ x: 0.5, y: 0.5, active: false, hoverIdx: -1 });
@@ -436,24 +435,27 @@ const HomeClients = () => {
     });
   }, []);
 
-  const COLS = 7, ROWS = 3;
+  /** Desktop columns — matches default grid; CSS overrides column count below 900px. Hover uses real cells, not coordinate math. */
+  const COLS = 7;
 
   const onMove = (e) => {
     const r = ref.current.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width;
     const y = (e.clientY - r.top) / r.height;
-    const col = Math.min(COLS - 1, Math.max(0, Math.floor(x * COLS)));
-    const row = Math.min(ROWS - 1, Math.max(0, Math.floor(y * ROWS)));
-    const hoverIdx = row * COLS + col;
-    targetRef.current = { x, y, active: true, hoverIdx };
+    const t = targetRef.current;
+    targetRef.current = { ...t, x, y, active: true };
     if (!rafRef.current) rafRef.current = requestAnimationFrame(tick);
-    // #region agent log
-    if (dbgHoverLogRef.current !== hoverIdx) {
-      dbgHoverLogRef.current = hoverIdx;
-      fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeClients:onMove', message: 'hoverIdxChange', data: { hypothesisId: 'H1', hoverIdx, row, col, y: Math.round(y * 1000) / 1000, gridW: Math.round(r.width), gridH: Math.round(r.height), innerWidth: typeof window !== 'undefined' ? window.innerWidth : 0 }, timestamp: Date.now(), runId: 'pre-fix' }) }).catch(() => {});
-    }
-    // #endregion
   };
+
+  const onCardEnter = (idx) => {
+    const t = targetRef.current;
+    targetRef.current = { ...t, hoverIdx: idx, active: true };
+    // #region agent log
+    fetch('http://127.0.0.1:7837/ingest/e849a84d-c4e5-4ac3-9ebd-f8eb341c5084', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Debug-Session-Id': 'c543d8' }, body: JSON.stringify({ sessionId: 'c543d8', location: 'home.jsx:HomeClients:onCardEnter', message: 'cardEnter', data: { hypothesisId: 'H1', idx, isCta: idx === CLIENTS.length, innerWidth: typeof window !== 'undefined' ? window.innerWidth : 0 }, timestamp: Date.now(), runId: 'verify-fix' }) }).catch(() => {});
+    // #endregion
+    if (!rafRef.current) rafRef.current = requestAnimationFrame(tick);
+  };
+
   const onLeave = () => {
     targetRef.current = { x: 0.5, y: 0.5, active: false, hoverIdx: -1 };
     if (!rafRef.current) rafRef.current = requestAnimationFrame(tick);
@@ -498,6 +500,8 @@ const HomeClients = () => {
             return (
               <div
                 key={c}
+                role="presentation"
+                onMouseEnter={() => onCardEnter(i)}
                 className={`bl-client-card-v2${isHover ? ' is-hover' : ''}`}
                 style={{ transform: isHover ? 'translateZ(40px)' : 'translateZ(0)' }}
               >
@@ -512,6 +516,7 @@ const HomeClients = () => {
           {/* 22nd cell — CTA, spans full row, jumps to contact */}
           <a
             href="#contact"
+            onMouseEnter={() => onCardEnter(CLIENTS.length)}
             className={`bl-client-card-v2 bl-client-card-v2--cta${m.hoverIdx === CLIENTS.length && m.active ? ' is-hover' : ''}`}
             style={{ gridColumn: '1 / -1', textDecoration: 'none', transform: (m.hoverIdx === CLIENTS.length && m.active) ? 'translateZ(48px)' : 'translateZ(0)' }}
           >

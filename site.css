@@ -771,14 +771,17 @@ img { max-width: 100%; }
   color: var(--bl-yellow);
   transition: transform 0.4s cubic-bezier(.2,.7,.3,1);
 }
-.bl-client-card-v2--cta:hover,
+/* Hover state driven by .is-hover from pointer enter — avoids fighting :hover when coords mis-fired */
 .bl-client-card-v2--cta.is-hover {
   background: linear-gradient(90deg, rgba(253,213,53,0.18) 0%, rgba(253,213,53,0.05) 100%);
   box-shadow: 0 24px 60px -20px rgba(253,213,53,0.30), 0 0 0 1px rgba(253,213,53,0.55) inset;
 }
-.bl-client-card-v2--cta:hover .bl-client-card-v2-cta__arrow,
 .bl-client-card-v2--cta.is-hover .bl-client-card-v2-cta__arrow {
   transform: translateX(10px);
+}
+.bl-client-card-v2--cta:focus-visible {
+  outline: 2px solid var(--bl-yellow);
+  outline-offset: 3px;
 }
 @media (max-width: 600px) {
   .bl-client-card-v2--cta { grid-column: 1 / -1 !important; padding: 20px 16px !important; }
