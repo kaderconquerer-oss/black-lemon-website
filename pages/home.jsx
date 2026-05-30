@@ -1,13 +1,38 @@
 // Home page — single-page scroller
 
+// Word carousel isolated so parent hero + Reveal wrappers do not re-render every tick (perf).
+const HeroRotatingWords = ({ words }) => {
+  const [i, setI] = React.useState(0);
+  React.useEffect(() => {
+    const t = setInterval(() => setI(x => (x + 1) % words.length), 2200);
+    return () => clearInterval(t);
+  }, [words.length]);
+
+  return (
+    <span style={{ position: 'relative', display: 'inline-block', minWidth: '11ch' }}>
+      {words.map((w, idx) => (
+        <span key={w} style={{
+          position: idx === 0 ? 'relative' : 'absolute',
+          left: 0, top: 0,
+          opacity: idx === i ? 1 : 0,
+          transform: idx === i ? 'translateY(0)' : 'translateY(14px)',
+          transition: 'opacity 0.45s cubic-bezier(.2,.7,.3,1), transform 0.45s cubic-bezier(.2,.7,.3,1)',
+          whiteSpace: 'nowrap',
+          pointerEvents: 'none',
+        }}>{w}</span>
+      ))}
+    </span>
+  );
+};
+
 const HERO_WORDS = [
-  'Galas',
-  'Memories',
-  'Roadshows',
-  'Launches',
-  'Experiences',
-  'Activations',
-  'Private events',
+  'Galas.',
+  'Memories.',
+  'Roadshows.',
+  'Launches.',
+  'Experiences.',
+  'Activations.',
+  'Private events.',
 ];
 
 const HomeHero = () => {
@@ -21,13 +46,14 @@ const HomeHero = () => {
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 40, paddingTop: 24, minHeight: 0 }}>
         <Reveal>
-          <h1 className="bl-h1 bl-hero-headline" style={{ maxWidth: 1500 }}>
-            <span className="bl-hero-headline__lead">We Make</span>
-            <span className="bl-hero-headline__stack">
-              {HERO_WORDS.map((w) => (
-                <span key={w} className="bl-hero-headline__stack-line">{w}</span>
-              ))}
+          <h1 className="bl-h1" style={{ maxWidth: 1500 }}>
+            We make<br/>
+            <span style={{ display: 'inline-flex', alignItems: 'baseline' }}>
+              <span style={{ display: 'inline-block', width: '0.06em', height: '0.85em', background: 'var(--bl-yellow)', alignSelf: 'center', marginRight: '0.08em' }} />
+              <HeroRotatingWords words={HERO_WORDS} />
             </span>
+            <br/>
+            <span className="bl-italic" style={{ fontWeight: 300, fontSize: '0.7em' }}>People remember.</span>
           </h1>
         </Reveal>
 
@@ -40,11 +66,11 @@ const HomeHero = () => {
           <div className="bl-hero-scroll">
             <Reveal delay={450}>
               <a href="#about" className="bl-scroll-cue bl-scroll-cue--rail" aria-label="Scroll to explore the studio">
-                <span className="bl-scroll-cue__hint">Scroll</span>
                 <span className="bl-scroll-cue__rail" aria-hidden="true">
                   <span className="bl-scroll-cue__rail-fill" />
                   <span className="bl-scroll-cue__glow-dot" />
                 </span>
+                <span className="bl-scroll-cue__hint">Scroll</span>
               </a>
             </Reveal>
           </div>
@@ -107,18 +133,18 @@ const HomeAbout = () => {
                 bio: 'A visionary strategist bringing innovation and precision to every project.' },
             ].map((f, i) => (
               <Reveal key={f.name} delay={120 + i * 120}>
-                <article className="bl-founder-row">
-                  <div className="bl-founder-copy">
-                    <div className="bl-eyebrow bl-founder-copy__label">Co-founder</div>
-                    <h3 className="bl-h3 bl-founder-copy__name">{f.name}</h3>
-                    <p className="bl-founder-copy__bio">{f.bio}</p>
-                  </div>
+                <article className="bl-founder-card">
                   <div className="bl-founder-photo">
                     {f.image ? (
                       <img src={f.image} alt={f.name} className="bl-founder-photo__img" />
                     ) : (
                       <Placeholder label="Founder Two" style={{ width: '100%', height: '100%', border: 'none' }} />
                     )}
+                  </div>
+                  <div className="bl-founder-copy">
+                    <div className="bl-eyebrow bl-founder-copy__label">Co-founder</div>
+                    <h3 className="bl-h3 bl-founder-copy__name">{f.name}</h3>
+                    <p className="bl-founder-copy__bio">{f.bio}</p>
                   </div>
                 </article>
               </Reveal>
