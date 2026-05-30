@@ -1,33 +1,16 @@
 // Home page — single-page scroller
 
-// Word carousel isolated so parent hero + Reveal wrappers do not re-render every tick (perf).
-const HeroRotatingWords = ({ words }) => {
-  const [i, setI] = React.useState(0);
-  React.useEffect(() => {
-    const t = setInterval(() => setI(x => (x + 1) % words.length), 2200);
-    return () => clearInterval(t);
-  }, [words.length]);
-
-  return (
-    <span style={{ position: 'relative', display: 'inline-block', minWidth: '6ch' }}>
-      {words.map((w, idx) => (
-        <span key={idx} style={{
-          position: idx === 0 ? 'relative' : 'absolute',
-          left: 0, top: 0,
-          opacity: idx === i ? 1 : 0,
-          transform: idx === i ? 'translateY(0)' : 'translateY(14px)',
-          transition: 'opacity 0.45s cubic-bezier(.2,.7,.3,1), transform 0.45s cubic-bezier(.2,.7,.3,1)',
-          whiteSpace: 'nowrap',
-          pointerEvents: 'none',
-        }}>{w}</span>
-      ))}
-    </span>
-  );
-};
+const HERO_WORDS = [
+  'Galas',
+  'Memories',
+  'Roadshows',
+  'Launches',
+  'Experiences',
+  'Activations',
+  'Private events',
+];
 
 const HomeHero = () => {
-  const words = ['Galas.', 'Launches.', 'Weddings.', 'Festivals.', 'Town halls.', 'Dinners.'];
-
   return (
     <section id="hero" className="bl-hero" style={{ minHeight: '100vh', background: '#0a0a0a', color: '#fff', padding: '128px 64px 96px', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       {/* Top meta — subtle, top-right, yellow */}
@@ -38,14 +21,13 @@ const HomeHero = () => {
 
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 40, paddingTop: 24, minHeight: 0 }}>
         <Reveal>
-          <h1 className="bl-h1" style={{ maxWidth: 1500 }}>
-            We make<br/>
-            <span style={{ display: 'inline-flex', alignItems: 'baseline' }}>
-              <span style={{ display: 'inline-block', width: '0.06em', height: '0.85em', background: 'var(--bl-yellow)', alignSelf: 'center', marginRight: '0.08em' }} />
-              <HeroRotatingWords words={words} />
+          <h1 className="bl-h1 bl-hero-headline" style={{ maxWidth: 1500 }}>
+            <span className="bl-hero-headline__lead">We Make</span>
+            <span className="bl-hero-headline__stack">
+              {HERO_WORDS.map((w) => (
+                <span key={w} className="bl-hero-headline__stack-line">{w}</span>
+              ))}
             </span>
-            <br/>
-            <span className="bl-italic" style={{ fontWeight: 300, fontSize: '0.7em' }}>People remember.</span>
           </h1>
         </Reveal>
 
@@ -98,49 +80,50 @@ const HomeAbout = () => {
 
   return (
     <section ref={sectionRef} id="about" className="bl-about-immersive">
-      {/* Founders row */}
-      <div className="bl-section" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 96, marginBottom: 72, alignItems: 'flex-end' }}>
+      {/* Founders — intro left, profiles stacked right */}
+      <div className="bl-section bl-founders-section">
+        <div className="bl-founders-layout">
           <Reveal>
-            <div className="bl-eyebrow" style={{ marginBottom: 32 }}>About the studio</div>
-            <h2 className="bl-h2">Two founders.<br/><span className="bl-italic" style={{ fontWeight: 300 }}>One studio, since 2019.</span></h2>
-            <YellowRule width="160px" height={3} delay={300} style={{ marginTop: 32 }} />
+            <div className="bl-founders-intro">
+              <div className="bl-eyebrow bl-founders-intro__eyebrow">Black Lemon since 2019</div>
+              <h2 className="bl-h2 bl-founders-intro__title">
+                Two founders.<br/>
+                <span className="bl-italic" style={{ fontWeight: 300 }}>One agency.</span>
+              </h2>
+              <YellowRule width="72px" height={2} delay={300} style={{ marginTop: 28 }} />
+              <p className="bl-founders-intro__dek">
+                A UAE-based experiential agency dedicated to creating bold, immersive, and remarkable experiences.
+              </p>
+            </div>
           </Reveal>
-          <Reveal delay={200}>
-            <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 22, lineHeight: 1.5, opacity: 0.75, margin: 0 }}>
-              A UAE-based experiential agency dedicated to creating bold, immersive, and unforgettable experiences.
-            </p>
-          </Reveal>
-        </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 64 }} className="bl-founders">
-          {[
-            { name: 'Hassan El Beyrouthy', role: 'Creative Director · Co-founder',
-              image: 'assets/hassan.jpg',
-              bio: 'A short bio about Hassan — background, taste, what he brings to the room. Replace this paragraph with the real one when ready. Two or three sentences feels about right.' },
-            { name: 'Founder Two', role: 'Production Director · Co-founder',
-              image: null,
-              bio: 'A short bio about Founder Two — background, taste, what they bring to the room. Replace this paragraph with the real one when ready. Two or three sentences feels about right.' },
-          ].map((f, i) => (
-            <Reveal key={f.name} delay={i * 150}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-                {f.image ? (
-                  <div style={{ width: '100%', aspectRatio: '4 / 5', border: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden', background: '#0a0a0a' }}>
-                    <img src={f.image} alt={f.name} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top', display: 'block', filter: 'grayscale(0.15) contrast(1.02)' }} />
+          <div className="bl-founders-list">
+            {[
+              { name: 'Hassan El Beyrouthy',
+                image: 'assets/hassan.jpg',
+                bio: 'A UAE-based experiential expert dedicated to creating bold, immersive, and remarkable experiences.' },
+              { name: 'Founder Two',
+                image: null,
+                bio: 'A visionary strategist bringing innovation and precision to every project.' },
+            ].map((f, i) => (
+              <Reveal key={f.name} delay={120 + i * 120}>
+                <article className="bl-founder-row">
+                  <div className="bl-founder-copy">
+                    <div className="bl-eyebrow bl-founder-copy__label">Co-founder</div>
+                    <h3 className="bl-h3 bl-founder-copy__name">{f.name}</h3>
+                    <p className="bl-founder-copy__bio">{f.bio}</p>
                   </div>
-                ) : (
-                  <Placeholder label={`Portrait — ${f.name}`} style={{ width: '100%', aspectRatio: '4 / 5', border: '1px solid rgba(255,255,255,0.1)' }} />
-                )}
-                <div>
-                  <div className="bl-eyebrow" style={{ marginBottom: 8 }}>{f.role}</div>
-                  <h3 className="bl-h3" style={{ marginBottom: 16 }}>{f.name}</h3>
-                  <p style={{ fontFamily: 'var(--font-serif)', fontStyle: 'italic', fontWeight: 300, fontSize: 18, lineHeight: 1.6, opacity: 0.8, margin: 0 }}>
-                    {f.bio}
-                  </p>
-                </div>
-              </div>
-            </Reveal>
-          ))}
+                  <div className="bl-founder-photo">
+                    {f.image ? (
+                      <img src={f.image} alt={f.name} className="bl-founder-photo__img" />
+                    ) : (
+                      <Placeholder label="Founder Two" style={{ width: '100%', height: '100%', border: 'none' }} />
+                    )}
+                  </div>
+                </article>
+              </Reveal>
+            ))}
+          </div>
         </div>
       </div>
 
