@@ -80,6 +80,86 @@ const HomeHero = () => {
   );
 };
 
+const JOURNEY_STOPS = [
+  'Launches',
+  'Real estate',
+  'VIP events',
+  'Private events',
+  'Automotive',
+  'Corporate',
+  'Mall activations',
+  'Influencer',
+  'Pop-ups',
+  'Roadshows',
+];
+
+const StoryJourney = () => (
+  <div className="bl-journey">
+    <div className="bl-journey__head">
+      <span className="bl-journey__eyebrow">The journey</span>
+      <p className="bl-journey__lead">
+        From first brief to final bow — we bring ideas to life through strategy, creative direction, and obsession over every detail.
+      </p>
+    </div>
+    <div className="bl-journey__track" aria-hidden="true">
+      <span className="bl-journey__line" />
+      <span className="bl-journey__pulse" />
+    </div>
+    <ol className="bl-journey__stops">
+      {JOURNEY_STOPS.map((stop, i) => (
+        <li key={stop} className="bl-journey__stop" style={{ '--i': i }}>
+          <span className="bl-journey__dot" aria-hidden="true" />
+          <span className="bl-journey__label">{stop}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+);
+
+const StoryStatement = () => (
+  <div className="bl-story-statement">
+    <div className="bl-story-statement__glow" aria-hidden="true" />
+    <div className="bl-story-statement__frame" aria-hidden="true">
+      <span className="bl-story-statement__corner bl-story-statement__corner--tl" />
+      <span className="bl-story-statement__corner bl-story-statement__corner--br" />
+    </div>
+    <span className="bl-story-statement__mark" aria-hidden="true">&ldquo;</span>
+    <p className="bl-story-statement__text">
+      Every project is an opportunity to create something <em>remarkable</em> — energy, innovation, and precision that connect brands with people in authentic, memorable ways.
+    </p>
+  </div>
+);
+
+const StoryVision = () => (
+  <blockquote className="bl-story-vision">
+    <span className="bl-story-vision__eyebrow">Vision</span>
+    <p className="bl-story-vision__text">
+      To lead experiential in the UAE &amp; GCC — pushing creative boundaries and building moments designed to be remembered.
+    </p>
+  </blockquote>
+);
+
+const StoryStats = () => {
+  const stats = [
+    { to: 20, suffix: '+', label: 'Years in Dubai' },
+    { to: 14, suffix: '', label: 'Disciplines' },
+    { to: 30, suffix: '+', label: 'Happy clients' },
+  ];
+  return (
+    <div className="bl-about-stats">
+      {stats.map((s, i) => (
+        <div key={s.label} className="bl-about-stats__item">
+          <div className="bl-about-stats__num" style={{ '--delay': `${i * 80}ms` }}>
+            <Counter to={s.to} suffix={s.suffix} duration={1400 + i * 200} />
+          </div>
+          <span className="bl-about-stats__rule" aria-hidden="true" />
+          <div className="bl-eyebrow bl-about-stats__label">{s.label}</div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 // About — immersive parallax with agency story
 const HomeAbout = () => {
   const sectionRef = React.useRef(null);
@@ -162,7 +242,7 @@ const HomeAbout = () => {
         <div className="bl-about-float-shape" style={{ width: 80, height: 80, borderRadius: '50%', top: '40%', right: '15%', transform: `translateY(${progress * -80}px)`, opacity: 0.2, borderColor: 'rgba(253,213,53,0.15)' }} />
 
         <div className="bl-about-story__grid">
-          <div>
+          <div className="bl-about-story__col bl-about-story__col--main">
             <Reveal>
               <div className="bl-eyebrow" style={{ marginBottom: 32, color: 'var(--bl-yellow)' }}>The Black Lemon story</div>
               <h2 className="bl-about-big-text">
@@ -175,41 +255,20 @@ const HomeAbout = () => {
                 Black Lemon is a UAE-based experiential agency dedicated to creating bold, immersive, and unforgettable experiences. Built from a passion for creativity, premium execution, and meaningful client relationships, we go beyond traditional event management to craft moments that leave a lasting impact.
               </p>
             </Reveal>
-            <Reveal delay={250}>
-              <span className="bl-about-accent-line" />
-              <p className="bl-about-prose">
-                From automotive launches, real estate showcases, VIP gatherings, and corporate events to mall activations, influencer experiences, pop-ups, and roadshows — we bring ideas to life through strategic thinking, creative direction, and attention to every detail.
-              </p>
+            <Reveal delay={280}>
+              <StoryJourney />
             </Reveal>
           </div>
 
-          <div style={{ paddingTop: 80 }}>
+          <div className="bl-about-story__col bl-about-story__col--aside">
             <Reveal delay={200}>
-              <p className="bl-about-prose">
-                At Black Lemon, we believe every project is an opportunity to create something remarkable. Our approach combines energy, innovation, and precision to deliver experiences that connect brands with people in authentic and memorable ways.
-              </p>
+              <StoryStatement />
             </Reveal>
-            <Reveal delay={300}>
-              <span className="bl-about-accent-line" />
-              <p className="bl-about-prose" style={{ color: 'rgba(255,255,255,0.9)', fontSize: 22 }}>
-                Driven by a vision to become one of the leading experiential agencies in the UAE and GCC, we are committed to pushing creative boundaries and delivering experiences designed to be remembered.
-              </p>
+            <Reveal delay={320}>
+              <StoryVision />
             </Reveal>
-            <Reveal delay={400}>
-              <div style={{ marginTop: 48, display: 'flex', gap: 48 }}>
-                <div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 48, color: 'var(--bl-yellow)', letterSpacing: '-0.03em', lineHeight: 1 }}>6+</div>
-                  <div className="bl-eyebrow" style={{ marginTop: 8 }}>Years in Dubai</div>
-                </div>
-                <div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 48, color: 'var(--bl-yellow)', letterSpacing: '-0.03em', lineHeight: 1 }}>14</div>
-                  <div className="bl-eyebrow" style={{ marginTop: 8 }}>Disciplines</div>
-                </div>
-                <div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 48, color: 'var(--bl-yellow)', letterSpacing: '-0.03em', lineHeight: 1 }}>1</div>
-                  <div className="bl-eyebrow" style={{ marginTop: 8 }}>Studio</div>
-                </div>
-              </div>
+            <Reveal delay={420}>
+              <StoryStats />
             </Reveal>
           </div>
         </div>
